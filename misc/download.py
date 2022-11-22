@@ -61,9 +61,6 @@ def download_features(download_root=None, features_metadata_path=None, node='as'
         if not check_file_exist(local_path, filesize):
             download_from_s3_path(s3_path, local_path)
 
-        if i == 300:
-            break
-
 
 def download_training_labels(download_root=None, training_labels_metadata_path=None, node='as'):
     print('Downloading training labels ...')
