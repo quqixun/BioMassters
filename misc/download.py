@@ -88,5 +88,6 @@ def download_training_labels(download_root=None, training_labels_metadata_path=N
 
 
 if __name__ == '__main__':
-    download_features()
-    download_training_labels()
+
+    download_features(node='as')
+    download_training_labels(node='as')
