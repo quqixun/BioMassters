@@ -2,6 +2,7 @@ import os
 import gc
 import pickle
 import rasterio
+import warnings
 import matplotlib
 import numpy as np
 import matplotlib.pyplot as plt
@@ -11,28 +12,29 @@ from os.path import join as opj
 
 
 matplotlib.use('Agg')
+warnings.filterwarnings('ignore')
 
 
 PROCESS_INFO = {
     'label': {'2pow': -6, 'min': -3.0, 'max': 14.0},
     'S1': {
         0: {'2pow': None, 'min': -25.0, 'max': 30.0},
-        1: {'2pow': None, 'min': -61.0, 'max': 30.0},
-        2: {'2pow': None, 'min': -25.0, 'max': 30.0},
-        3: {'2pow': None, 'min': -70.0, 'max': 20.0},
+        1: {'2pow': None, 'min': -63.0, 'max': 29.0},
+        2: {'2pow': None, 'min': -25.0, 'max': 32.0},
+        3: {'2pow': None, 'min': -70.0, 'max': 23.0},
     },
     'S2': {
-        0:  {'2pow': -1,   'min': 0.0, 'max': 15.0 },
-        1:  {'2pow': -1,   'min': 0.0, 'max': 15.0 },
-        2:  {'2pow': -1,   'min': 0.0, 'max': 15.0 },
-        3:  {'2pow': -1,   'min': 0.0, 'max': 15.0 },
-        4:  {'2pow': -1,   'min': 0.0, 'max': 15.0 },
-        5:  {'2pow': -1,   'min': 0.0, 'max': 15.0 },
-        6:  {'2pow': -1,   'min': 0.0, 'max': 15.0 },
-        7:  {'2pow': -1,   'min': 0.0, 'max': 15.0 },
-        8:  {'2pow': -1,   'min': 0.0, 'max': 15.0 },
-        9:  {'2pow': -1,   'min': 0.0, 'max': 15.0 },
-        10: {'2pow': None, 'min': 0.0, 'max': 105.0},
+        0:  {'2pow': -1,   'min': 0.0, 'max': 14.0 },
+        1:  {'2pow': -1,   'min': 0.0, 'max': 14.0 },
+        2:  {'2pow': -1,   'min': 0.0, 'max': 14.0 },
+        3:  {'2pow': -1,   'min': 0.0, 'max': 14.0 },
+        4:  {'2pow': -1,   'min': 0.0, 'max': 14.0 },
+        5:  {'2pow': -1,   'min': 0.0, 'max': 14.0 },
+        6:  {'2pow': -1,   'min': 0.0, 'max': 14.0 },
+        7:  {'2pow': -1,   'min': 0.0, 'max': 14.0 },
+        8:  {'2pow': -1,   'min': 0.0, 'max': 14.0 },
+        9:  {'2pow': -1,   'min': 0.0, 'max': 14.0 },
+        10: {'2pow': None, 'min': 0.0, 'max': 100.0},
     }
 }
 
@@ -75,7 +77,10 @@ def process_data(data, data_name, data_index=None):
     return data
 
 
-def calc_stats(data, data_name, exclude_zero=False, p=None, hist=True):
+def calc_stats(
+    data, data_name, exclude_zero=False,
+    p=None, hist=False, plot_dir=None
+):
 
     data_ = data.copy()
 
@@ -102,14 +107,13 @@ def calc_stats(data, data_name, exclude_zero=False, p=None, hist=True):
     print(f'- std: {data_std:.3f}')
 
     if hist:
-        plot_dir = f'./data/source/plot/'
         os.makedirs(plot_dir, exist_ok=True)
         plot_file = f'stats_{data_name}_p{p}.png'
         plot_path = opj(plot_dir, plot_file)
 
         plt.figure()
         plt.title(f'{data_name} - P:{p}')
-        plt.hist(data.reshape(-1), bins=100, log=False)
+        plt.hist(data.reshape(-1), bins=100, log=True)
         plt.tight_layout()
         # plt.show()
         plt.savefig(plot_path)
@@ -125,7 +129,13 @@ def calc_stats(data, data_name, exclude_zero=False, p=None, hist=True):
 
 if __name__ == '__main__':
 
-    data_dir = './data/source/train'
+    # source_dir = './data/source'
+    source_dir = '/mnt/dataset/quqixun/Github/BioMassters/data/source'
+
+    data_dir = os.path.join(source_dir, 'train')
+    plot_dir = os.path.join(source_dir, 'plot')
+    stats_path = os.path.join(source_dir, 'stats.pkl')
+
     subjects = os.listdir(data_dir)
     subjects.sort()
 
@@ -146,7 +156,10 @@ if __name__ == '__main__':
 
     label = np.array(label_list)
     label = process_data(label, 'label')
-    stats['label'] = calc_stats(label, 'label', exclude_zero=False, p=None)
+    stats['label'] = calc_stats(
+        label, 'label', exclude_zero=False,
+        p=None, hist=True, plot_dir=plot_dir
+    )
     del label_list, label
     gc.collect()
 
@@ -161,7 +174,7 @@ if __name__ == '__main__':
             ith_feat_list = []
 
             print(f'Feature: {fname} - index: {index}')
-            for subject in tqdm(subjects[:1000], ncols=88):
+            for subject in tqdm(subjects, ncols=88):
                 subject_dir = opj(data_dir, subject)
 
                 for month in range(12):
@@ -176,16 +189,17 @@ if __name__ == '__main__':
 
             ith_feat = np.array(ith_feat_list)
             ith_fname = f'{fname}-{index}'
-            stats[fname][index] = calc_stats(ith_feat, ith_fname, exclude_zero=True, p=None)
+            stats[fname][index] = calc_stats(
+                ith_feat, ith_fname, exclude_zero=True,
+                p=None, hist=True, plot_dir=plot_dir
+            )
             del ith_feat_list, ith_feat
             gc.collect()
 
     # --------------------------------------------------------------------------
     # save statistics
 
-    stats_path = './data/source/stats.pkl'
     with open(stats_path, 'wb') as f:
         pickle.dump(stats, f)
 
     print(stats)
-    
