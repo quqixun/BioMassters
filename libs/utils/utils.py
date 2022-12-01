@@ -103,7 +103,7 @@ def process_data(data, data_name, data_index=None, norm_stats=None):
     data = (data - min_) / range_
 
     if (data_name != 'label') and (norm_stats is not None):
-        data = (data - norm_stats['mean']) / norm_stats['std']
+        data = (data - norm_stats['avg']) / norm_stats['std']
 
     return data
 

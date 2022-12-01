@@ -61,7 +61,7 @@ def process_data(data, data_name, data_index=None):
         min_thresh = 2 ** process_dict['2pow']
         data = np.where(data < min_thresh, min_thresh, data)
         data = np.log2(data)
-    
+
     min_ = process_dict['min']
     max_ = process_dict['max']
     range_ = max_ - min_

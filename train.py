@@ -4,6 +4,7 @@ import pickle
 import argparse
 
 from libs.utils import *
+from libs.train import *
 from omegaconf import OmegaConf
 
 
@@ -17,11 +18,15 @@ def main(args):
     configs = OmegaConf.create(configs)
 
     # --------------------------------------------------------------------------
-    # loads data splits
+    # loads data splits and stats
 
     splits_path = os.path.join(args.data_root, 'splits.pkl')
     with open(splits_path, 'rb') as f:
         splits = pickle.load(f)
+
+    stats_path = os.path.join(args.data_root, 'stats.pkl')
+    with open(stats_path, 'rb') as f:
+        stats = pickle.load(f)
 
     # --------------------------------------------------------------------------
     # generates folds
@@ -42,7 +47,7 @@ def main(args):
     for fold_id in fold_id_list:
         exp_dir = os.path.join(args.exp_root, configs.exp, f'fold{fold_id}')
         train_list = splits[fold_id]['train']
-        val_list = splits[fold_id]['val']
+        val_list   = splits[fold_id]['val']
 
         # prints information
         print('-' * 100)
@@ -54,7 +59,18 @@ def main(args):
         print(f'- Num Train : {len(train_list)}')
         print(f'- Num Val   : {len(val_list)}')
 
+        loader_kwargs = dict(configs=configs.loader, norm_stats=stats)
+        train_loader = get_dataloader('train', train_list, **loader_kwargs)
+        val_loader   = get_dataloader('val',   val_list,   **loader_kwargs)
+
+        # initialize trainer
+        trainer = BMTrainer(configs, exp_dir, train_loader, val_loader, args.resume)
+
+        # training model
+        trainer.forward()
+
         print('-' * 100, '\n')
+        break
 
     return
 
