@@ -257,7 +257,6 @@ class PatchReversing3D(nn.Module):
             out = self.act(out)
 
         out = self.out_conv(out)
-
         return out
 
 
@@ -938,12 +937,14 @@ class VT2UNet3D(nn.Module):
             input_resolution = decoder_layer.output_resolution
 
         self.patch_reverse = PatchReversing3D(
-            patch_size=patch_size,
-            input_dims=input_dims,
-            output_dims=output_dims,
-            norm_layer=norm_layer if patch_norm else None,
-            act_layer=nn.GELU
+            patch_size  = patch_size,
+            input_dims  = input_dims,
+            output_dims = output_dims,
+            norm_layer  = norm_layer if patch_norm else None,
+            act_layer   = nn.GELU
         )
+
+        self.outlayer = nn.Sigmoid()
 
         self.apply(self._init_weights)
 
@@ -995,7 +996,7 @@ class VT2UNet3D(nn.Module):
 
         out = rearrange(out, 'b d h w c -> b c d h w')
         preds = self.patch_reverse(out)
-        return preds
+        return torch.mean(self.outlayer(preds), dim=2)
 
 
 if __name__ == '__main__':
