@@ -5,5 +5,5 @@ tqdm              == 4.64.1
 omegaconf         == 2.2.3
 einops            == 0.6.0
 timm              == 0.6.12
-volumentations-3D == 0.1.8
+volumentations-3D == 1.0.4
 accelerate        == 0.14.0
