@@ -6,21 +6,21 @@ seed: 42
 
 loader:
   image_size:    [12, 256, 256]
-  train_batch:   4
-  val_batch:     1
+  train_batch:   8
+  val_batch:     8
   num_workers:   16
   pin_memory:    true
   apply_augment: true
 
 trainer:
   epochs:          100
-  accum_iter:      2
-  ckpt_freq:       1000
+  accum_iter:      1
+  ckpt_freq:       20
   print_freq:      100
   mixed_precision: fp16
 
 optimizer:
-  lr:           0.01
+  lr:           0.001
   betas:        [0.9, 0.999]
   amsgrad:      true
   weight_decay: 0.01
