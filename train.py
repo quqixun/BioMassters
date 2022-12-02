@@ -57,7 +57,7 @@ def main(args):
         print(f'- Configs   : {args.config_file}')
         print(f'- Fold      : {fold_id}')
         print(f'- Num Train : {len(train_list)}')
-        print(f'- Num Val   : {len(val_list)}')
+        print(f'- Num Val   : {len(val_list)}\n')
 
         loader_kwargs = dict(configs=configs.loader, norm_stats=stats)
         train_loader = get_dataloader('train', train_list, **loader_kwargs)

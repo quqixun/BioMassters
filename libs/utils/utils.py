@@ -108,7 +108,7 @@ def process_data(data, data_name, data_index=None, norm_stats=None):
     return data
 
 
-def recover_label(data):
+def recover_data(data):
 
     process_dict = PROCESS_INFO['label']
     min_ = process_dict['min']

@@ -216,6 +216,7 @@ class PatchReversing3D(nn.Module):
         patch_size,
         input_dims,
         output_dims,
+        input_depth,
         norm_layer = nn.LayerNorm,
         act_layer  = nn.GELU
     ):
@@ -234,7 +235,7 @@ class PatchReversing3D(nn.Module):
         if act_layer is not None:
             self.act = act_layer()
 
-        self.out_conv = nn.Conv3d(
+        self.out_conv = nn.Conv2d(
             input_dims, output_dims,
             kernel_size=3, padding=1, bias=False
         )
@@ -256,7 +257,9 @@ class PatchReversing3D(nn.Module):
         if self.act is not None:
             out = self.act(out)
 
+        out = torch.mean(out, dim=2)
         out = self.out_conv(out)
+        # out: (B, 1, H, W)
         return out
 
 
@@ -801,7 +804,7 @@ class VT2UNet3D(nn.Module):
         image_size,
         patch_size,
         window_size,
-        input_dims       = 3,
+        input_dims       = 15,
         output_dims      = 1,
         embed_dims       = 96,
         depths           = [2, 2, 2, 2],
@@ -940,6 +943,7 @@ class VT2UNet3D(nn.Module):
             patch_size  = patch_size,
             input_dims  = input_dims,
             output_dims = output_dims,
+            input_depth = input_resolution[0],
             norm_layer  = norm_layer if patch_norm else None,
             act_layer   = nn.GELU
         )
@@ -996,15 +1000,15 @@ class VT2UNet3D(nn.Module):
 
         out = rearrange(out, 'b d h w c -> b c d h w')
         preds = self.patch_reverse(out)
-        return torch.mean(self.outlayer(preds), dim=2)
+        return self.outlayer(preds)
 
 
 if __name__ == '__main__':
 
     B = 2
     C = 15
-    image_size = [12, 256, 256]
-    patch_size = [2, 4, 4]
+    image_size  = [12, 256, 256]
+    patch_size  = [2, 4, 4]
     window_size = [2, 8, 8]
 
     input_size = [B, C] + image_size

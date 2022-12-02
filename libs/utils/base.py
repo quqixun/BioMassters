@@ -1,5 +1,6 @@
 import os
 import torch
+import pandas as pd
 
 from ..models import define_model
 from accelerate import Accelerator
@@ -11,9 +12,10 @@ class BMBaseTrainer(object):
     def __init__(self, configs, exp_dir, train_loader, val_loader, resume=False):
 
         # creates dirs for saving outputs
-        self.logs_dir  = os.path.join(exp_dir, 'logs')
-        self.ckpts_dir = os.path.join(exp_dir, 'ckpts')
-        os.makedirs(self.logs_dir,  exist_ok=True)
+        self.exp_dir    = exp_dir
+        self.logs_path  = os.path.join(exp_dir, 'logs.csv')
+        self.ckpts_dir  = os.path.join(exp_dir, 'ckpts')
+        self.model_path = os.path.join(self.exp_dir, 'model.pth')
         os.makedirs(self.ckpts_dir, exist_ok=True)
 
         # trainer parameters
@@ -28,7 +30,6 @@ class BMBaseTrainer(object):
         self.accelerator = Accelerator(
             mixed_precision=self.mixed_precision,
             gradient_accumulation_steps=self.accum_iter,
-            log_with='all', logging_dir=self.logs_dir
         )
         self.device = self.accelerator.device
 
@@ -89,35 +90,29 @@ class BMBaseTrainer(object):
             self.accelerator.print(f'>>> Faild to resume ckpt from: {ckpt_target}')
 
     def _save_checkpoint(self, epoch):
-        ckpt_name = f'epoch_{epoch:06d}'
-        ckpt_dir  = os.path.join(self.ckpts_dir, ckpt_name)
-        self.accelerator.save_state(ckpt_dir)
-        self.accelerator.print(f'>>> Save ckpt to: {ckpt_dir}')
+        output_dir = os.path.join(self.ckpts_dir, f'epoch_{epoch:06d}')
+        self.accelerator.save_state(output_dir)
+        self.accelerator.print(f'>>> Save ckpt to: {output_dir}')
 
-    # def _save_model(self, model, model_name):
-    #     model_path = os.path.join(self.exp_dir, f'{model_name}.pth')
-    #     torch.save(model.state_dict(), model_path)
+    def _save_model(self):
+        if self.accelerator.is_main_process:
+            self.accelerator.wait_for_everyone()
+            unwrapped_model = self.accelerator.unwrap_model(self.model)
+            self.accelerator.save(unwrapped_model.state_dict(), self.model_path)
 
-    # def _save_logs(self, epoch, train_metrics, val_metrics=None):
-    #     log_stats = {
-    #         'epoch': epoch,
-    #         **{f'train_{k}': v for k, v in train_metrics.items()},
-    #         **{f'val_{k}': v for k, v in val_metrics.items()}
-    #     }
-    #     df = pd.DataFrame(log_stats, index=[0])
+    def _save_logs(self, epoch, train_metrics, val_metrics=None):
+        log_stats = {
+            'epoch': epoch,
+            **{f'train_{k}': v for k, v in train_metrics.items()},
+            **{f'val_{k}': v for k, v in val_metrics.items()}
+        }
+        df = pd.DataFrame(log_stats, index=[0])
 
-    #     if not os.path.isfile(self.log_path):
-    #         df.to_csv(self.log_path, index=False)
-    #     else:
-    #         df.to_csv(self.log_path, index=False, mode='a', header=False)
+        if not os.path.isfile(self.logs_path):
+            df.to_csv(self.logs_path, index=False)
+        else:
+            df.to_csv(self.logs_path, index=False, mode='a', header=False)
 
-    # def _save_metrics(self, val_metrics, metrics_type):
-    #     assert metrics_type in ['dynamic', 'static']
-
-    #     df = pd.DataFrame(val_metrics, index=[0])
-
-    #     if metrics_type == 'dynamic':
-    #         metrics_path = self.Dmetrics_path
-    #     else:  # metrics_type == 'static'
-    #         metrics_path = self.Smetrics_path
-    #     df.to_csv(metrics_path, index=False)
+    def _type_convert(self, tensor):
+        if self.mixed_precision in ['fp16', 'bf16']:
+            return tensor.half()
