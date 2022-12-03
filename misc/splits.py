@@ -8,7 +8,7 @@ from copy import deepcopy
 if __name__ == '__main__':
 
     seed = 42
-    k_folds = 5
+    k_folds = 4
 
     # source_dir = './data/source'
     source_dir = '/mnt/dataset/quqixun/Github/BioMassters/data/source'
@@ -25,8 +25,10 @@ if __name__ == '__main__':
         start = k * per_fold
         end = (k + 1) * per_fold if k < (k_folds - 1) else len(subjects)
 
-        val = [os.path.join(data_dir, i) for i in deepcopy(subjects[start:end])]
-        train = [os.path.join(data_dir, i) for i in subjects if i not in val]
+        val   = [i for i in subjects[start:end]]
+        train = [i for i in subjects if i not in val]
+        val   = [os.path.join(data_dir, i) for i in val]
+        train = [os.path.join(data_dir, i) for i in train]
         splits[k] = {'train': train, 'val': val}
 
     splits_path = os.path.join(source_dir, 'splits.pkl')
