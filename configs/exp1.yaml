@@ -13,11 +13,10 @@ loader:
   apply_augment: true
 
 trainer:
-  epochs:          100
-  accum_iter:      1
-  ckpt_freq:       20
-  print_freq:      100
-  mixed_precision: fp16
+  epochs:     50
+  accum_iter: 1
+  ckpt_freq:  50
+  print_freq: 200
 
 optimizer:
   lr:           0.001
@@ -27,27 +26,23 @@ optimizer:
 
 scheduler:
   min_lr: 0.0
-  warmup: 10
+  warmup: 5
 
 model:
-  name: vt2unet
+  name: swin_unetr
   params:
-    image_size:       [12, 256, 256]
-    patch_size:       [2, 4, 4]
-    window_size:      [2, 8, 8]
-    input_dims:       15
-    output_dims:      1
-    embed_dims:       48
-    depths:           [2, 2, 2, 2]
-    num_heads:        [3, 6, 12, 24]
-    mlp_ratio:        4.0
-    qkv_bias:         true
-    drop_rate:        0.0
-    attn_drop_rate:   0.0
-    drop_path_rate:   0.1
-    patch_norm:       true
-    skip_connect:     true
-    apply_cross_attn: true
+    image_size:     [12, 256, 256]
+    patch_size:     [1, 2, 2]
+    window_size:    [3, 7, 7]
+    in_channels:    15
+    out_channels:   1
+    depths:         [2, 2, 2, 2]
+    num_heads:      [3, 6, 12, 24]
+    feature_size:   24
+    norm_name:      batch
+    drop_rate:      0.0
+    attn_drop_rate: 0.0
+    drop_path_rate: 0.1
 
 
 ...
