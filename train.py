@@ -64,13 +64,12 @@ def main(args):
         val_loader   = get_dataloader('val',   val_list,   **loader_kwargs)
 
         # initialize trainer
-        trainer = BMTrainer(configs, exp_dir, train_loader, val_loader, args.resume)
+        trainer = BMTrainer(configs, exp_dir, args.resume)
 
         # training model
-        trainer.forward()
+        trainer.forward(train_loader, val_loader)
 
         print('-' * 100, '\n')
-        break
 
     return
 

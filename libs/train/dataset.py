@@ -33,11 +33,11 @@ class BMDataset(Dataset):
             self.transform = V.Compose([
                 V.RandomResizedCrop(
                     image_size, scale_limit=(0.8, 1.2),
-                    interpolation=1, resize_type=0, p=1.0
+                    interpolation=1, resize_type=0, p=0.3
                 ),
-                V.Flip(1, p=1.0),
-                V.Flip(2, p=1.0),
-                V.RandomRotate90((1, 2), p=1.0)
+                V.Flip(1, p=0.3),
+                V.Flip(2, p=0.3),
+                V.RandomRotate90((1, 2), p=0.3)
             ], p=1.0)
 
     def __len__(self):
@@ -91,9 +91,9 @@ class BMDataset(Dataset):
         #     plt.tight_layout()
         #     plt.show()
 
-        feature = feature.transpose(3, 0, 1, 2)
+        feature = feature.transpose(3, 0, 1, 2).astype(np.float32)
         # feature: (15, 12, 256, 256)
-        label = label[0].transpose(2, 0, 1)
+        label = label[0].transpose(2, 0, 1).astype(np.float32)
         # label: (1, 256, 256)
         return feature, label
 
