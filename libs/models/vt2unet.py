@@ -136,12 +136,11 @@ class PatchExpanding3D(nn.Module):
         self.dim_scale = dim_scale
         self.input_resolution = input_resolution
 
-        if isinstance(resample_scale, list):
-            assert all(r in [1, 2] for r in resample_scale)
-            self.resample_scale = resample_scale
-        elif isinstance(resample_scale, int):
-            assert resample_scale in [1, 2]
+        if isinstance(resample_scale, int):
+            # assert resample_scale in [1, 2]
             self.resample_scale = [resample_scale] * 3
+        else:  # list, tuple ...
+            self.resample_scale = resample_scale
         self.rD, self.rH, self.rW = self.resample_scale
 
         self.output_resolution = [
@@ -153,7 +152,10 @@ class PatchExpanding3D(nn.Module):
         self.new_dims = shape_scale * input_dims // dim_scale
         self.expand = nn.Linear(input_dims, self.new_dims, bias=False)
         self.output_dims = input_dims // dim_scale
-        self.norm = norm_layer(self.output_dims)
+
+        self.norm = None
+        if norm_layer is not None:
+            self.norm = norm_layer(self.output_dims)
 
     def forward(self, x):
         # x: (B, D, H, W, C)
@@ -165,7 +167,9 @@ class PatchExpanding3D(nn.Module):
             'b d h w (rd rh rw c) -> b (d rd) (h rh) (w rw) c',
             rd=self.rD, rh=self.rH, rw=self.rW, c=self.output_dims
         )
-        out = self.norm(out)
+
+        if self.norm is not None:
+            out = self.norm(out)
         # out: [B, D*rD, H*rH, W*rW, self.output_dim]
 
         return out
@@ -939,18 +943,35 @@ class VT2UNet3D(nn.Module):
             input_dims = decoder_layer.output_dims
             input_resolution = decoder_layer.output_resolution
 
-        self.patch_reverse = PatchReversing3D(
-            patch_size  = patch_size,
-            input_dims  = input_dims,
-            output_dims = output_dims,
-            input_depth = input_resolution[0],
-            norm_layer  = norm_layer if patch_norm else None,
-            act_layer   = nn.GELU
+        self.patch_reverse = PatchExpanding3D(
+            input_dims       = input_dims,
+            input_resolution = input_resolution,
+            dim_scale        = 1,
+            resample_scale   = patch_size,
+            norm_layer       = norm_layer if patch_norm else None
         )
 
-        self.outlayer = nn.Sigmoid()
+        self.outlayer = nn.Sequential(
+            nn.GELU(),
+            nn.Conv2d(
+                input_dims, output_dims,
+                kernel_size=7, padding=3, bias=False
+            )
+            # nn.Sigmoid()
+        )
 
-        self.apply(self._init_weights)
+        # self.patch_reverse = PatchReversing3D(
+        #     patch_size  = patch_size,
+        #     input_dims  = input_dims,
+        #     output_dims = output_dims,
+        #     input_depth = input_resolution[0],
+        #     norm_layer  = norm_layer if patch_norm else None,
+        #     act_layer   = nn.GELU
+        # )
+        #
+        # self.outlayer = nn.Sigmoid()
+
+        # self.apply(self._init_weights)
 
     def _init_weights(self, m):
         if isinstance(m, nn.Linear):
@@ -960,7 +981,8 @@ class VT2UNet3D(nn.Module):
         elif isinstance(m, nn.LayerNorm):
             nn.init.constant_(m.weight, 1.0)
             nn.init.constant_(m.bias, 0.0)
-        elif isinstance(m, (nn.Conv3d, nn.ConvTranspose3d)):
+        # elif isinstance(m, (nn.Conv3d, nn.ConvTranspose3d)):
+        elif isinstance(m, (nn.Conv3d, nn.Conv2d)):
             trunc_normal_(m.weight, std=0.02)
             if m.bias is not None:
                 nn.init.constant_(m.bias, 0.0)
@@ -998,8 +1020,9 @@ class VT2UNet3D(nn.Module):
             prev_qkv_list = enc_qkv_list[i]
             out, qkv_list = dec_layer(out, skip=skip, prev_qkv_list=prev_qkv_list)
 
-        out = rearrange(out, 'b d h w c -> b c d h w')
         preds = self.patch_reverse(out)
+        preds = rearrange(preds, 'b d h w c -> b c d h w')
+        preds = torch.mean(preds, dim=2)
         return self.outlayer(preds)
 
 
