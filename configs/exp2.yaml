@@ -1,7 +1,7 @@
 ---
 
 
-exp:  swin_unetr/exp1
+exp:  swin_unetr/exp2
 seed: 42
 cv:   4
 
@@ -21,7 +21,7 @@ trainer:
 
 loss:
   rec:
-    mode: mae
+    mode: mse
 
 optimizer:
   lr:           0.001
