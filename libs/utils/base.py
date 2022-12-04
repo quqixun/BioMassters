@@ -13,8 +13,8 @@ class BMBaseTrainer(object):
         # creates dirs for saving outputs
         self.configs    = configs
         self.exp_dir    = exp_dir
-        self.logs_path  = os.path.join(self.exp_dir, 'logs.csv')
         self.ckpts_dir  = os.path.join(self.exp_dir, 'ckpts')
+        self.logs_path  = os.path.join(self.exp_dir, 'logs.csv')
         self.model_path = os.path.join(self.exp_dir, 'model.pth')
 
         os.makedirs(self.ckpts_dir, exist_ok=True)
@@ -34,8 +34,13 @@ class BMBaseTrainer(object):
         self.model = self.model.to(self.device)
 
         # instantiates loss
-        # self.loss = torch.nn.MSELoss()
-        self.loss = torch.nn.L1Loss()
+        rec_mode = configs.loss.rec.mode
+        if rec_mode == 'mse':
+            self.loss = torch.nn.MSELoss()
+        elif rec_mode == 'mae':
+            self.loss = torch.nn.L1Loss()
+        else:
+            raise ValueError('unknowm rec loss mode')
 
         # instantiates optimizer
         lr           = configs.optimizer.lr

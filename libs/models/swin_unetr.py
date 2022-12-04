@@ -1008,8 +1008,8 @@ if __name__ == '__main__':
         out_channels=1,
         depths=(2, 2, 2, 2),
         num_heads=(3, 6, 12, 24),
-        feature_size=48,
-        norm_name='instance',
+        feature_size=24,
+        norm_name='batch',
         drop_rate=0.0,
         attn_drop_rate=0.0,
         drop_path_rate=0.0,
@@ -1019,5 +1019,7 @@ if __name__ == '__main__':
     )
     model.cuda()
 
-    output = model(x)
-    print(output.size())
+    print(model)
+
+    # output = model(x)
+    # print(output.size())

@@ -20,7 +20,7 @@ def main(args):
     # --------------------------------------------------------------------------
     # loads data splits and stats
 
-    splits_path = os.path.join(args.data_root, 'splits.pkl')
+    splits_path = os.path.join(args.data_root, f'splits{configs.cv}.pkl')
     with open(splits_path, 'rb') as f:
         splits = pickle.load(f)
 
@@ -32,7 +32,7 @@ def main(args):
     # generates folds
 
     fold_id_list = list(map(int, args.folds.split(',')))
-    fold_id_list = [f for f in fold_id_list if f < 5]
+    fold_id_list = [f for f in fold_id_list if f < configs.cv]
     if len(fold_id_list) == 0:
         raise ValueError(f'folds {args.folds} are not availabel')
 
