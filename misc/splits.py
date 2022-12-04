@@ -8,7 +8,7 @@ from copy import deepcopy
 if __name__ == '__main__':
 
     seed = 42
-    k_folds = 4
+    k_folds = 4  # 4, 5
 
     # source_dir = './data/source'
     source_dir = '/mnt/dataset/quqixun/Github/BioMassters/data/source'
@@ -31,6 +31,6 @@ if __name__ == '__main__':
         train = [os.path.join(data_dir, i) for i in train]
         splits[k] = {'train': train, 'val': val}
 
-    splits_path = os.path.join(source_dir, 'splits.pkl')
+    splits_path = os.path.join(source_dir, f'splits{k_folds}.pkl')
     with open(splits_path, 'wb') as f:
         pickle.dump(splits, f)
