@@ -3,25 +3,25 @@
 
 exp:  swin_unetr/exp2
 seed: 42
-cv:   4
+cv:   5
 
 loader:
   image_size:    [12, 256, 256]
-  train_batch:   8
-  val_batch:     8
+  train_batch:   4
+  val_batch:     4
   num_workers:   16
   pin_memory:    true
-  apply_augment: true
+  apply_augment: false
 
 trainer:
   epochs:     50
-  accum_iter: 1
+  accum_iter: 4
   ckpt_freq:  50
   print_freq: 200
 
 loss:
   rec:
-    mode: mse
+    mode: mae
 
 optimizer:
   lr:           0.001
@@ -43,7 +43,7 @@ model:
     out_channels:   1
     depths:         [2, 2, 2, 2]
     num_heads:      [3, 6, 12, 24]
-    feature_size:   24
+    feature_size:   48
     norm_name:      batch
     drop_rate:      0.0
     attn_drop_rate: 0.0
