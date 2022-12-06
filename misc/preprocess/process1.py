@@ -11,7 +11,7 @@ from tqdm import tqdm
 from os.path import join as opj
 
 
-# matplotlib.use('Agg')
+matplotlib.use('Agg')
 warnings.filterwarnings('ignore')
 
 
@@ -35,7 +35,7 @@ def read_raster(data_path, return_zero=False, data_shape=None):
     return data
 
 
-PROCESS_INFO = {
+PROCESS1_INFO = {
     'label': {'2pow': -6, 'min': -3.0, 'max': 14.0},
     'S1': {
         0: {'2pow': None, 'min': -25.0, 'max': 30.0},
@@ -59,12 +59,12 @@ PROCESS_INFO = {
 }
 
 
-def process_data(data, data_name, data_index=None, norm_stats=None):
+def process1_data(data, data_name, data_index=None, norm_stats=None):
 
     if data_name == 'label':
-        process_dict = PROCESS_INFO['label']
+        process_dict = PROCESS1_INFO['label']
     else:
-        process_dict = PROCESS_INFO[data_name][data_index]
+        process_dict = PROCESS1_INFO[data_name][data_index]
 
     if process_dict['2pow'] is not None:
         min_thresh = 2 ** process_dict['2pow']
@@ -91,13 +91,11 @@ def process_data(data, data_name, data_index=None, norm_stats=None):
 
 def calc_stats(
     data, data_name, exclude_zero=False,
-    p=None, hist=False, plot_dir=None
+    p=99.9, hist=False, plot_dir=None
 ):
 
-    data_ = data.copy()
-
     if exclude_zero:
-        data = data_[np.where(data > 0)]
+        data = data[np.where(data > 0)]
 
     if p is not None:
         assert 0 <= p <= 100
@@ -149,8 +147,8 @@ if __name__ == '__main__':
 
     process_dir = './data/process1'
     # process_dir = '/mnt/dataset/quqixun/Github/BioMassters/data/process1'
-    process_data_dir = os.path.join(process_dir, 'train')
-    os.makedirs(process_data_dir, exist_ok=True)
+    process1_data_dir = os.path.join(process_dir, 'train')
+    os.makedirs(process1_data_dir, exist_ok=True)
     plot_dir = os.path.join(process_dir, 'plot')
     stats_path = os.path.join(process_dir, 'stats.pkl')
     stats = {}
@@ -165,11 +163,11 @@ if __name__ == '__main__':
         # load label data
         label_path = opj(subject_dir, f'{subject}_agbm.tif')
         label = read_raster(label_path)
+        label = process1_data(label, 'label')
         if label is not None:
             label_list.append(label)
 
     label = np.array(label_list)
-    label = process_data(label, 'label')
     stats['label'] = calc_stats(
         label, 'label', exclude_zero=False,
         p=None, hist=True, plot_dir=plot_dir
@@ -198,7 +196,7 @@ if __name__ == '__main__':
                     if feat is not None:
                         assert feat.shape[0] == fnum
                         ith_feat = feat[index]
-                        ith_feat = process_data(ith_feat, fname, index)
+                        ith_feat = process1_data(ith_feat, fname, index)
                         ith_feat_list.append(ith_feat)
 
             ith_feat = np.array(ith_feat_list)
@@ -229,7 +227,7 @@ if __name__ == '__main__':
         label_path = opj(subject_dir, f'{subject}_agbm.tif')
         assert os.path.isfile(label_path), f'label {label_path} is not exist'
         label_src = read_raster(label_path, return_zero=True, data_shape=GT_SHAPE)
-        label = process_data(label_src, 'label')
+        label = process1_data(label_src, 'label')
         label_src = np.expand_dims(label_src, axis=-1)
         label = np.expand_dims(label, axis=-1)
         # label_src, label: (1, 256, 256, 1)
@@ -241,8 +239,8 @@ if __name__ == '__main__':
             s2_path = opj(subject_dir, 'S2', f'{subject}_S2_{month:02d}.tif')
             s1 = read_raster(s1_path, return_zero=True, data_shape=S1_SHAPE)
             s2 = read_raster(s2_path, return_zero=True, data_shape=S2_SHAPE)
-            s1 = [process_data(s1[i], 'S1', i, stats['S1'][i]) for i in range(4)]
-            s2 = [process_data(s2[i], 'S2', i, stats['S2'][i]) for i in range(11)]
+            s1 = [process1_data(s1[i], 'S1', i, stats['S1'][i]) for i in range(4)]
+            s2 = [process1_data(s2[i], 'S2', i, stats['S2'][i]) for i in range(11)]
             feature = np.expand_dims(np.stack(s1 + s2, axis=-1), axis=0)
             feature_list.append(feature)
         feature = np.concatenate(feature_list, axis=0)
@@ -268,6 +266,6 @@ if __name__ == '__main__':
         #     plt.tight_layout()
         #     plt.show()
 
-        subject_path = os.path.join(process_data_dir, f'{subject}.pkl')
+        subject_path = os.path.join(process1_data_dir, f'{subject}.pkl')
         with open(subject_path, 'wb') as f:
             pickle.dump(subject_dict, f)
