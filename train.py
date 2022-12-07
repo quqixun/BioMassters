@@ -20,11 +20,12 @@ def main(args):
     # --------------------------------------------------------------------------
     # loads data splits and stats
 
-    splits_path = os.path.join(args.data_root, f'splits{configs.cv}.pkl')
+    splits_path = os.path.join(args.data_root, f'splits.pkl')
     with open(splits_path, 'rb') as f:
         splits = pickle.load(f)
 
-    stats_path = os.path.join(args.data_root, 'stats.pkl')
+    stats_file = 'stats.pkl' if args.processed else f'stats_{args.process_method}.pkl'
+    stats_path = os.path.join(args.data_root, stats_file)
     with open(stats_path, 'rb') as f:
         stats = pickle.load(f)
 
@@ -59,7 +60,12 @@ def main(args):
         print(f'- Num Train : {len(train_list)}')
         print(f'- Num Val   : {len(val_list)}\n')
 
-        loader_kwargs = dict(configs=configs.loader, norm_stats=stats)
+        loader_kwargs = dict(
+            configs        = configs.loader,
+            norm_stats     = stats, 
+            processed      = args.processed,
+            process_method = args.process_method,
+        )
         train_loader = get_dataloader('train', train_list, **loader_kwargs)
         val_loader   = get_dataloader('val',   val_list,   **loader_kwargs)
 
@@ -70,6 +76,7 @@ def main(args):
         trainer.forward(train_loader, val_loader)
 
         print('-' * 100, '\n')
+        break
 
     return
 
@@ -77,11 +84,13 @@ def main(args):
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='BioMassters Training')
-    parser.add_argument('--data_root',   type=str, help='dir path of training data')
-    parser.add_argument('--exp_root',    type=str, help='root dir of experiment')
-    parser.add_argument('--config_file', type=str, help='yaml path of configs')
-    parser.add_argument('--resume',      action='store_true', help='if resume from checkpoint')
-    parser.add_argument('--folds',       type=str, help='list of folds, separated by ,')
+    parser.add_argument('--data_root',      type=str, help='dir path of training data')
+    parser.add_argument('--exp_root',       type=str, help='root dir of experiment')
+    parser.add_argument('--config_file',    type=str, help='yaml path of configs')
+    parser.add_argument('--folds',          type=str, help='list of folds, separated by ,')
+    parser.add_argument('--resume',         action='store_true', help='if resume from checkpoint')
+    parser.add_argument('--processed',      action='store_true', help='if data has been processed')
+    parser.add_argument('--process_method', type=str, help='method for processing, log2 or plain')
     args = parser.parse_args()
 
     check_train_args(args)
