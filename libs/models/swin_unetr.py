@@ -51,6 +51,7 @@ class SwinUNETR(nn.Module):
         drop_rate: float = 0.0,
         attn_drop_rate: float = 0.0,
         drop_path_rate: float = 0.0,
+        attn_version: str = 'v1',
         normalize: bool = True,
         use_checkpoint: bool = False,
         spatial_dims: int = 3
@@ -69,6 +70,7 @@ class SwinUNETR(nn.Module):
             drop_rate: dropout rate.
             attn_drop_rate: attention dropout rate.
             drop_path_rate: drop path rate.
+            attn_version: version of attention in swin transformer.
             normalize: normalize output intermediate features in each stage.
             use_checkpoint: use gradient checkpointing for reduced memory usage.
             spatial_dims: number of spatial dims.
@@ -123,6 +125,7 @@ class SwinUNETR(nn.Module):
             drop_rate=drop_rate,
             attn_drop_rate=attn_drop_rate,
             drop_path_rate=drop_path_rate,
+            attn_version=attn_version,
             norm_layer=nn.LayerNorm,
             use_checkpoint=use_checkpoint,
             spatial_dims=spatial_dims
@@ -342,7 +345,7 @@ def get_window_size(x_size, window_size, shift_size=None):
         return tuple(use_window_size), tuple(use_shift_size)
 
 
-class WindowAttention(nn.Module):
+class WindowAttentionV1(nn.Module):
     '''
     Window based multi-head self attention module with relative position bias based on: 'Liu et al.,
     Swin Transformer: Hierarchical Vision Transformer using Shifted Windows
@@ -469,6 +472,7 @@ class SwinTransformerBlock(nn.Module):
         qkv_bias: bool = True,
         drop: float = 0.0,
         attn_drop: float = 0.0,
+        attn_version: str = 'v1',
         drop_path: float = 0.0,
         act_layer: str = 'GELU',
         norm_layer: Type[LayerNorm] = nn.LayerNorm,
@@ -498,14 +502,18 @@ class SwinTransformerBlock(nn.Module):
         self.mlp_ratio = mlp_ratio
         self.use_checkpoint = use_checkpoint
         self.norm1 = norm_layer(dim)
-        self.attn = WindowAttention(
-            dim,
-            window_size=self.window_size,
-            num_heads=num_heads,
-            qkv_bias=qkv_bias,
-            attn_drop=attn_drop,
-            proj_drop=drop,
-        )
+
+        if attn_version == 'v1':
+            self.attn = WindowAttentionV1(
+                dim,
+                window_size=self.window_size,
+                num_heads=num_heads,
+                qkv_bias=qkv_bias,
+                attn_drop=attn_drop,
+                proj_drop=drop,
+            )
+        else:
+            raise ValueError('unknown attn_version')
 
         self.drop_path = DropPath(drop_path) if drop_path > 0.0 else nn.Identity()
         self.norm2 = norm_layer(dim)
@@ -777,6 +785,7 @@ class BasicLayer(nn.Module):
         qkv_bias: bool = False,
         drop: float = 0.0,
         attn_drop: float = 0.0,
+        attn_version: str = 'v1',
         norm_layer: Type[LayerNorm] = nn.LayerNorm,
         downsample: Optional[nn.Module] = None,
         use_checkpoint: bool = False,
@@ -814,6 +823,7 @@ class BasicLayer(nn.Module):
                     qkv_bias=qkv_bias,
                     drop=drop,
                     attn_drop=attn_drop,
+                    attn_version=attn_version,
                     drop_path=drop_path[i] if isinstance(drop_path, list) else drop_path,
                     norm_layer=norm_layer,
                     use_checkpoint=use_checkpoint,
@@ -884,6 +894,7 @@ class SwinTransformer(nn.Module):
         drop_rate: float = 0.0,
         attn_drop_rate: float = 0.0,
         drop_path_rate: float = 0.0,
+        attn_version: str = 'v1',
         norm_layer: Type[LayerNorm] = nn.LayerNorm,
         patch_norm: bool = False,
         use_checkpoint: bool = False,
@@ -943,6 +954,7 @@ class SwinTransformer(nn.Module):
                 qkv_bias=qkv_bias,
                 drop=drop_rate,
                 attn_drop=attn_drop_rate,
+                attn_version=attn_version,
                 norm_layer=norm_layer,
                 downsample=PatchMerging,
                 use_checkpoint=use_checkpoint,
