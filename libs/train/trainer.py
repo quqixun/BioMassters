@@ -5,6 +5,7 @@ import warnings
 import numpy as np
 
 from ..utils import *
+from ..process import *
 from torch.cuda.amp import autocast, GradScaler 
 
 
@@ -18,6 +19,8 @@ class BMTrainer(BMBaseTrainer):
         self.scaler = GradScaler()
 
     def forward(self, train_loader, val_loader):
+        self.norm_stats = val_loader.dataset.norm_stats['label']
+        self.process_method = val_loader.dataset.process_method
 
         best_val_rmse = np.inf
         start_time = time.time()
@@ -88,9 +91,11 @@ class BMTrainer(BMBaseTrainer):
         data_iter = logger.log_every(loader)
         for step, batch_data in enumerate(data_iter):
             feature, label = [d.to(self.device) for d in batch_data]
-            label = recover_data(label.cpu().numpy())
-            pred = self.model(feature)
-            pred = recover_data(pred.cpu().numpy())
+            label = label.cpu().numpy()
+
+            pred = self.model(feature).cpu().numpy()
+            pred = recover_label(pred, self.norm_stats, self.process_method)
+
             rmse = np.sqrt(np.mean((pred - label) ** 2, axis=(1, 2, 3)))
             rmse = np.mean(rmse).astype(float)
             logger.update(rmse=rmse)

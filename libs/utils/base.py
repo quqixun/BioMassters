@@ -75,7 +75,7 @@ class BMBaseTrainer(object):
             ckpt_file = ckpt_files[-1]
             ckpt_path = os.path.join(self.ckpts_dir, ckpt_file)
         else:
-            print('>>> No checkpoint was dound, ignore', '\n')
+            print('>>> No checkpoint was found, ignore', '\n')
             return
 
         try:
