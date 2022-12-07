@@ -3,20 +3,19 @@
 
 exp:  swin_unetr/exp1
 seed: 42
-cv:   4
+cv:   5
 
 loader:
-  image_size:    [12, 256, 256]
-  train_batch:   8
-  val_batch:     8
+  train_batch:   4
+  val_batch:     4
   num_workers:   16
   pin_memory:    true
-  apply_augment: true
+  apply_augment: false
 
 trainer:
-  epochs:     50
-  accum_iter: 1
-  ckpt_freq:  50
+  epochs:     100
+  accum_iter: 2
+  ckpt_freq:  100
   print_freq: 200
 
 loss:
@@ -31,7 +30,7 @@ optimizer:
 
 scheduler:
   min_lr: 0.0
-  warmup: 5
+  warmup: 10
 
 model:
   name: swin_unetr
@@ -43,11 +42,12 @@ model:
     out_channels:   1
     depths:         [2, 2, 2, 2]
     num_heads:      [3, 6, 12, 24]
-    feature_size:   24
+    feature_size:   48
     norm_name:      batch
     drop_rate:      0.0
     attn_drop_rate: 0.0
     drop_path_rate: 0.1
+    attn_version:   v1
 
 
 ...
