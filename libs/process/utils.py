@@ -1,15 +1,9 @@
 import os
-import warnings
 import rasterio
-import matplotlib
 import numpy as np
 import matplotlib.pyplot as plt
 
 from .clean import INLIERS_LOG2
-
-
-matplotlib.use('Agg')
-warnings.filterwarnings('ignore')
 
 
 GT_SHAPE = (1,  256, 256)
@@ -70,7 +64,6 @@ def calculate_statistics(
         plt.title(f'{data_name} - P:{p}')
         plt.hist(data.reshape(-1), bins=100, log=True)
         plt.tight_layout()
-        # plt.show()
         plt.savefig(plot_path)
         plt.close()
 
@@ -82,7 +75,7 @@ def calculate_statistics(
     }
 
 
-def normalize(data, norm_stats, norm_method='minmax'):
+def normalize(data, norm_stats, norm_method):
     assert norm_method in ['minmax', 'zscore']
 
     if norm_method == 'minmax':
@@ -98,7 +91,7 @@ def normalize(data, norm_stats, norm_method='minmax'):
     return data
 
 
-def recover_label(data, norm_stats, recover_method='log2'):
+def recover_label(data, norm_stats, recover_method):
     assert recover_method in ['log2', 'plain']
 
     min_ = norm_stats['min']
