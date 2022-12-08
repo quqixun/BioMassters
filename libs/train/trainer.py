@@ -1,15 +1,11 @@
 import time
 import torch
 import datetime
-import warnings
 import numpy as np
 
 from ..utils import *
 from ..process import *
 from torch.cuda.amp import autocast, GradScaler 
-
-
-warnings.filterwarnings('ignore')
 
 
 class BMTrainer(BMBaseTrainer):

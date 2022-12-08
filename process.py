@@ -4,6 +4,7 @@ import sys
 import pickle
 import argparse
 import warnings
+import numpy as np
 
 from tqdm import tqdm
 from libs.process import *
@@ -17,8 +18,8 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='BioMassters Preprocessing')
     parser.add_argument('--source_root',      type=str, help='dir path of source dataset')
-    parser.add_argument('--process_root',     type=str, help='dir path of processed dataset')
     parser.add_argument('--process_method',   type=str, help='method for processing, log2 or plain')
+    parser.add_argument('--process_root',     type=str, help='dir path of processed dataset')
     parser.add_argument('--apply_preprocess', action='store_true',
                         help='if save preprocessed dataset, it will take huge space on dick')
     args = parser.parse_args()
@@ -35,14 +36,17 @@ if __name__ == '__main__':
     # --------------------------------------------------------------------------
     # creats path for output files and directories
 
-    process_data_dir = os.path.join(process_root, 'train')
-    os.makedirs(process_data_dir, exist_ok=True)
-    plot_dir = os.path.join(process_root, 'plot')
-    os.makedirs(plot_dir, exist_ok=True)
-    
-    stats = {}
-    stats_path_in_process = os.path.join(process_root, 'stats.pkl')
-    stats_path_in_source  = os.path.join(source_root, f'stats_{process_method}.pkl')
+    if apply_preprocess:
+        assert process_root is not None
+        process_data_dir = os.path.join(process_root, 'train')
+        os.makedirs(process_data_dir, exist_ok=True)
+        plot_dir = os.path.join(process_root, 'plot')
+        os.makedirs(plot_dir, exist_ok=True)
+        stats_path = os.path.join(process_root, 'stats.pkl')
+    else:
+        plot_dir = os.path.join(source_root, 'plot', process_method)
+        os.makedirs(plot_dir, exist_ok=True)
+        stats_path = os.path.join(source_root, f'stats_{process_method}.pkl')
 
     # --------------------------------------------------------------------------
     # gets list of all subjects for training
@@ -70,6 +74,7 @@ if __name__ == '__main__':
     # computes statistics of agbm labels
 
     print('Label')
+    stats = {}
     label_list = []
     for subject in tqdm(subjects, ncols=88):
         subject_dir = opj(source_data_dir, subject)
@@ -124,10 +129,7 @@ if __name__ == '__main__':
     # --------------------------------------------------------------------------
     # save statistics
 
-    with open(stats_path_in_process, 'wb') as f:
-        pickle.dump(stats, f)
-    
-    with open(stats_path_in_source, 'wb') as f:
+    with open(stats_path, 'wb') as f:
         pickle.dump(stats, f)
 
     print(stats)

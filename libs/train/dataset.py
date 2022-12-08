@@ -3,7 +3,6 @@ __all__ = ['get_dataloader']
 
 import os
 import pickle
-import warnings
 import numpy as np
 import volumentations as V
 import matplotlib.pyplot as plt
@@ -12,9 +11,6 @@ from ..utils import *
 from ..process import *
 from os.path import join as opj
 from torch.utils.data import Dataset, DataLoader
-
-
-warnings.filterwarnings('ignore')
 
 
 class BMDataset(Dataset):
@@ -112,7 +108,7 @@ class BMDataset(Dataset):
 
         subject_path = self.data_list[index]
         label, feature = self.load_data_func(subject_path)
-        # llabel:  ( 1, 256, 256,  1)
+        # label:   ( 1, 256, 256,  1)
         # feature: (12, 256, 256, 15)
 
         if self.augment:
