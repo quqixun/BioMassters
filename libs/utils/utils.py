@@ -33,3 +33,21 @@ def init_environment(seed):
     torch.backends.cudnn.benchmark = False
 
     return
+
+
+# ------------------------------------------------------------------------------
+# predicting initialization
+
+
+def check_predict_args(args):
+
+    if not os.path.isdir(args.data_root):
+        raise IOError(f'data_root {args.data_root} is not exist')
+    
+    if not os.path.isdir(args.exp_root):
+        raise IOError(f'exp_root {args.exp_root} is not exist')
+
+    if not os.path.isfile(args.config_file):
+        raise IOError(f'config_file {args.config_file} is not exist')
+
+    return
