@@ -7,3 +7,4 @@ einops            == 0.6.0
 timm              == 0.6.12
 volumentations-3D == 1.0.4
 monai             == 1.0.1
+pillow            == 9.3.0

@@ -13,9 +13,9 @@ loader:
   apply_augment: false
 
 trainer:
-  epochs:     100
+  epochs:     50
   accum_iter: 2
-  ckpt_freq:  100
+  ckpt_freq:  50
   print_freq: 200
 
 loss:
@@ -30,7 +30,7 @@ optimizer:
 
 scheduler:
   min_lr: 0.0
-  warmup: 10
+  warmup: 5
 
 model:
   name: swin_unetr

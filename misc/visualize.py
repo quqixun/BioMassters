@@ -15,22 +15,22 @@ PROCESS_INFO = {
     'label': {'2pow': -6, 'min': -3.0, 'max': 14.0},
     'S1': {
         0: {'2pow': None, 'min': -25.0, 'max': 30.0},
-        1: {'2pow': None, 'min': -61.0, 'max': 30.0},
-        2: {'2pow': None, 'min': -25.0, 'max': 30.0},
-        3: {'2pow': None, 'min': -70.0, 'max': 20.0},
+        1: {'2pow': None, 'min': -63.0, 'max': 29.0},
+        2: {'2pow': None, 'min': -25.0, 'max': 32.0},
+        3: {'2pow': None, 'min': -70.0, 'max': 23.0},
     },
     'S2': {
-        0:  {'2pow': -1,   'min': 0.0, 'max': 15.0 },
-        1:  {'2pow': -1,   'min': 0.0, 'max': 15.0 },
-        2:  {'2pow': -1,   'min': 0.0, 'max': 15.0 },
-        3:  {'2pow': -1,   'min': 0.0, 'max': 15.0 },
-        4:  {'2pow': -1,   'min': 0.0, 'max': 15.0 },
-        5:  {'2pow': -1,   'min': 0.0, 'max': 15.0 },
-        6:  {'2pow': -1,   'min': 0.0, 'max': 15.0 },
-        7:  {'2pow': -1,   'min': 0.0, 'max': 15.0 },
-        8:  {'2pow': -1,   'min': 0.0, 'max': 15.0 },
-        9:  {'2pow': -1,   'min': 0.0, 'max': 15.0 },
-        10: {'2pow': None, 'min': 0.0, 'max': 110.0},
+        0:  {'2pow': -1,   'min': 0.0, 'max': 14.0 },
+        1:  {'2pow': -1,   'min': 0.0, 'max': 14.0 },
+        2:  {'2pow': -1,   'min': 0.0, 'max': 14.0 },
+        3:  {'2pow': -1,   'min': 0.0, 'max': 14.0 },
+        4:  {'2pow': -1,   'min': 0.0, 'max': 14.0 },
+        5:  {'2pow': -1,   'min': 0.0, 'max': 14.0 },
+        6:  {'2pow': -1,   'min': 0.0, 'max': 14.0 },
+        7:  {'2pow': -1,   'min': 0.0, 'max': 14.0 },
+        8:  {'2pow': -1,   'min': 0.0, 'max': 14.0 },
+        9:  {'2pow': -1,   'min': 0.0, 'max': 14.0 },
+        10: {'2pow': None, 'min': 0.0, 'max': 100.0},
     }
 }
 
@@ -107,7 +107,6 @@ if __name__ == '__main__':
                 s1_index_data = process_data(s1_index_data, 'S1', s1_index)
                 plt.subplot(4, 4, s1_index + 2)
                 plt.title(f'S1-{s1_index + 1}')
-                # plt.imshow(s1[s1_index])
                 plt.imshow(s1_index_data, **plot_kwargs)
                 plt.axis('off')
             for s2_index in range(s2.shape[0]):
@@ -115,7 +114,6 @@ if __name__ == '__main__':
                 s2_index_data = process_data(s2_index_data, 'S2', s2_index)
                 plt.subplot(4, 4, s2_index + 2 + s1.shape[0])
                 plt.title(f'S2-{s2_index + 1}')
-                # plt.imshow(s2[s2_index])
                 plt.imshow(s2_index_data, **plot_kwargs)
                 plt.axis('off')
             plt.tight_layout()
