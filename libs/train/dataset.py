@@ -5,7 +5,6 @@ import os
 import pickle
 import numpy as np
 import volumentations as V
-import matplotlib.pyplot as plt
 
 from ..utils import *
 from ..process import *
@@ -118,6 +117,7 @@ class BMDataset(Dataset):
             if label.shape[0] > 1:
                 label = label[:1]
 
+        # import matplotlib.pyplot as plt
         # for m in range(feature.shape[0]):
         #     subject = os.path.basename(subject_path)
         #     plt.figure(f'{subject} - {m:02d}', figsize=(15, 15))

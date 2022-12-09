@@ -20,14 +20,14 @@ class BMTrainer(BMBaseTrainer):
 
         best_val_rmse = np.inf
         start_time = time.time()
-        basic_msg = 'RMSE:{:.4f} Epoch:{}'
+        basic_msg = '- Best Val RMSE:{:.4f} at Epoch:{}'
 
         for epoch in range(self.start_epoch, self.epochs + 1):
             train_metrics = self._train_epoch(epoch, train_loader)
             val_metrics   = self._val_epoch(epoch, val_loader)
 
-            if val_metrics['rmse'] < best_val_rmse:
-                best_val_rmse = val_metrics['rmse']
+            if val_metrics['RMSE'] < best_val_rmse:
+                best_val_rmse = val_metrics['RMSE']
                 best_msg = basic_msg.format(best_val_rmse, epoch)
                 print('>>> Best Val Epoch - Lowest RMSE - Save Model <<<')
                 self._save_model()
@@ -63,8 +63,16 @@ class BMTrainer(BMBaseTrainer):
             with autocast():
                 feature, label = [d.to(self.device) for d in batch_data]
                 pred = self.model(feature)
-                loss = self.loss(pred, label)
-                logger.update(loss=loss.item())
+
+                loss = 0.0
+                if self.rec_loss_func is not None:
+                    rec_loss = self.rec_loss_func(pred, label)
+                    logger.update(LRec=rec_loss.item())
+                    loss += rec_loss
+                if self.sim_loss_func is not None:
+                    sim_loss = self.sim_loss_func(pred, label)
+                    logger.update(LSim=sim_loss.item())
+                    loss += sim_loss
 
             loss4opt = loss / self.accum_iter
             self.scaler.scale(loss4opt).backward()
@@ -94,7 +102,7 @@ class BMTrainer(BMBaseTrainer):
 
             rmse = np.sqrt(np.mean((pred - label) ** 2, axis=(1, 2, 3)))
             rmse = np.mean(rmse).astype(float)
-            logger.update(rmse=rmse)
+            logger.update(RMSE=rmse)
 
         # import matplotlib.pyplot as plt
         # plt.figure()

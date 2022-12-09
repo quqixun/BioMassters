@@ -50,4 +50,7 @@ def check_predict_args(args):
     if not os.path.isfile(args.config_file):
         raise IOError(f'config_file {args.config_file} is not exist')
 
+    if args.process_method not in ['log2', 'plain']:
+        raise ValueError(f'process_method {args.process_method} is not one of log2 or plain')
+
     return

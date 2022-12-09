@@ -1,32 +1,41 @@
 import os
 import torch
 import numpy as np
-import matplotlib.pyplot as plt
 
-from ..utils import *
 from PIL import Image
 from tqdm import tqdm
+from ..process import *
 from os.path import join as opj
 from ..models import define_model
 
 
 class BMPredictor(object):
 
-    def __init__(self, configs, exp_dir, norm_stats):
+    def __init__(self, model_paths, configs, norm_stats, process_method):
 
         self.norm_stats = norm_stats
+        self.process_method = process_method
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
         # loads models
         self.models = []
-        for i in range(configs.cv):
-            model_path = opj(exp_dir, f'fold{i}', 'model.pth')
+        for model_path in model_paths:
+            if not os.path.isfile(model_path):
+                pass
+
             model_dict = torch.load(model_path, map_location='cpu')
             model = define_model(configs.model)
             model.load_state_dict(model_dict)
             model = model.to(self.device)
             model.eval()
             self.models.append(model)
+
+        
+
+        if process_method == 'log2':
+            self.remove_outliers_func = remove_outliers_by_log2
+        elif process_method == 'plain':
+            self.remove_outliers_func = remove_outliers_by_plain
 
     @torch.no_grad()
     def forward(self, data_dir, output_dir):
@@ -35,23 +44,28 @@ class BMPredictor(object):
         subjects = os.listdir(data_dir)
         for subject in tqdm(subjects, ncols=88):
             subject_dir = opj(data_dir, subject)
-            output_path = opj(output_dir, f'{subject}_agbm.tif')
-
             feature = self._load_data(subject_dir)
+
             preds = []
             for model in self.models:
                 pred = model(feature)
-                pred = recover_data(pred.cpu().numpy()[0, 0])
+                pred = pred.cpu().numpy()[0, 0]
+                pred = recover_label(
+                    pred, self.norm_stats['label'],
+                    self.process_method
+                )
                 preds.append(pred)
 
             pred = np.mean(preds, axis=0)
 
-            plt.figure()
-            plt.imshow(pred)
-            plt.tight_layout()
-            plt.show()
+            # import matplotlib.pyplot as plt
+            # plt.figure()
+            # plt.imshow(pred)
+            # plt.tight_layout()
+            # plt.show()
 
             pred = Image.fromarray(pred)
+            output_path = opj(output_dir, f'{subject}_agbm.tif')
             pred.save(output_path, format='TIFF', save_all=True)
 
     def _load_data(self, subject_dir):
@@ -62,11 +76,23 @@ class BMPredictor(object):
         for month in range(12):
             s1_path = opj(subject_dir, 'S1', f'{subject}_S1_{month:02d}.tif')
             s2_path = opj(subject_dir, 'S2', f'{subject}_S2_{month:02d}.tif')
-            s1 = read_raster(s1_path, S1_SHAPE)
-            s2 = read_raster(s2_path, S2_SHAPE)
-            s1 = [process_data(s1[i], 'S1', i, self.norm_stats['S1'][i]) for i in range(4)]
-            s2 = [process_data(s2[i], 'S2', i, self.norm_stats['S2'][i]) for i in range(11)]
-            feature = np.expand_dims(np.stack(s1 + s2, axis=-1), axis=0)
+            s1 = read_raster(s1_path, True, S1_SHAPE)
+            s2 = read_raster(s2_path, True, S2_SHAPE)
+
+            s1_list = []
+            for index in range(4):
+                s1i = self.remove_outliers_func(s1[index], 'S1', index)
+                s1i = normalize(s1i, self.norm_stats['S1'][index], 'zscore')
+                s1_list.append(s1i)
+
+            s2_list = []
+            for index in range(11):
+                s2i = self.remove_outliers_func(s2[index], 'S2', index)
+                s2i = normalize(s2i, self.norm_stats['S2'][index], 'zscore')
+                s2_list.append(s2i)
+
+            feature = np.stack(s1_list + s2_list, axis=-1)
+            feature = np.expand_dims(feature, axis=0)
             feature_list.append(feature)
         feature = np.concatenate(feature_list, axis=0)
         feature = feature.transpose(3, 0, 1, 2).astype(np.float32)

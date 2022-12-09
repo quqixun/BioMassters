@@ -3,6 +3,7 @@ import torch
 import pandas as pd
 
 from ..models import define_model
+from .losses import RecLoss, SimLoss
 from .scheduler import WarmupCosineAnnealingLR
 
 
@@ -33,21 +34,32 @@ class BMBaseTrainer(object):
         self.model = define_model(configs.model)
         self.model = self.model.to(self.device)
 
-        # instantiates loss
-        rec_mode = configs.loss.rec.mode
-        if rec_mode == 'mse':
-            self.loss = torch.nn.MSELoss()
-        elif rec_mode == 'mae':
-            self.loss = torch.nn.L1Loss()
-        else:
-            raise ValueError('unknowm rec loss mode')
+        # instantiates reconstructrion loss
+        rec_kwargs = configs.loss.get('rec', None)
+        self.rec_loss_func = None
+        if rec_kwargs is not None:
+            self.rec_loss_func = RecLoss(**rec_kwargs)
+
+        # instantiates similarity loss
+        sim_kwargs = configs.loss.get('sim', None)
+        self.sim_loss_func = None
+        if sim_kwargs is not None:
+            self.sim_loss_func = SimLoss(**sim_kwargs)
+            self.sim_loss_func.to(self.device)
 
         # instantiates optimizer
+        if configs.optimizer.mode == 'adamw':
+            optimizer = torch.optim.AdamW
+        elif configs.optimizer.mode == 'adam':
+            optimizer = torch.optim.Adam
+        else:
+            raise ValueError('unknown optimizer mode')
+
         lr           = configs.optimizer.lr
         betas        = configs.optimizer.betas
         amsgrad      = configs.optimizer.amsgrad
         weight_decay = configs.optimizer.weight_decay
-        self.optimizer = torch.optim.AdamW(
+        self.optimizer = optimizer(
             self.model.parameters(), lr=lr, betas=betas,
             amsgrad=amsgrad, weight_decay=weight_decay
         )
