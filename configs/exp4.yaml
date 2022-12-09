@@ -1,7 +1,7 @@
 ---
 
 
-exp:  swin_unetr/exp1
+exp:  swin_unetr/exp4
 seed: 42
 cv:   5
 
@@ -10,7 +10,7 @@ loader:
   val_batch:     4
   num_workers:   16
   pin_memory:    true
-  apply_augment: false
+  apply_augment: true
 
 trainer:
   epochs:     50
@@ -21,6 +21,9 @@ trainer:
 loss:
   rec:
     mode:   mae
+    weight: 1.0
+  sim:
+    mode:   ssim
     weight: 1.0
 
 optimizer:
@@ -49,7 +52,7 @@ model:
     drop_rate:      0.0
     attn_drop_rate: 0.0
     drop_path_rate: 0.1
-    attn_version:   v1
+    attn_version:   v2
 
 
 ...

@@ -20,9 +20,11 @@ trainer:
 
 loss:
   rec:
-    mode: mae
+    mode:   mae
+    weight: 1.0
 
 optimizer:
+  mode:         adamw
   lr:           0.001
   betas:        [0.9, 0.999]
   amsgrad:      true
