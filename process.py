@@ -42,11 +42,13 @@ if __name__ == '__main__':
         os.makedirs(process_data_dir, exist_ok=True)
         plot_dir = os.path.join(process_root, 'plot')
         os.makedirs(plot_dir, exist_ok=True)
-        stats_path = os.path.join(process_root, 'stats.pkl')
+        stats_path_in_process = os.path.join(process_root, 'stats.pkl')
+        stats_path_in_source  = os.path.join(source_root, f'stats_{process_method}.pkl')
     else:
         plot_dir = os.path.join(source_root, 'plot', process_method)
         os.makedirs(plot_dir, exist_ok=True)
-        stats_path = os.path.join(source_root, f'stats_{process_method}.pkl')
+        stats_path_in_process = None
+        stats_path_in_source  = os.path.join(source_root, f'stats_{process_method}.pkl')
 
     # --------------------------------------------------------------------------
     # gets list of all subjects for training
@@ -129,7 +131,11 @@ if __name__ == '__main__':
     # --------------------------------------------------------------------------
     # save statistics
 
-    with open(stats_path, 'wb') as f:
+    if stats_path_in_process is not None:
+        with open(stats_path_in_process, 'wb') as f:
+            pickle.dump(stats, f)
+    
+    with open(stats_path_in_source, 'wb') as f:
         pickle.dump(stats, f)
 
     print(stats)
