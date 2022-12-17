@@ -91,13 +91,19 @@ def normalize(data, norm_stats, norm_method):
     return data
 
 
-def recover_label(data, norm_stats, recover_method):
+def recover_label(data, norm_stats, recover_method, norm_method='minmax'):
+    assert norm_method in ['minmax', 'zscore']
     assert recover_method in ['log2', 'plain']
 
-    min_ = norm_stats['min']
-    max_ = norm_stats['max']
-    range_ = max_ - min_
-    data = data * range_ + min_
+    if norm_method == 'minmax':
+        min_ = norm_stats['min']
+        max_ = norm_stats['max']
+        range_ = max_ - min_
+        data = data * range_ + min_
+    else:
+        avg = norm_stats['avg']
+        std = norm_stats['std']
+        data = data * std + avg
 
     if recover_method == 'log2':
         data = 2 ** data

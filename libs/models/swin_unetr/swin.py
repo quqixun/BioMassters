@@ -500,41 +500,6 @@ class SwinTransformerBlock(nn.Module):
     def forward_part2(self, x):
         return self.drop_path(self.mlp(self.norm2(x)))
 
-    def load_from(self, weights, n_block, layer):
-        root = f'module.{layer}.0.blocks.{n_block}.'
-        block_names = [
-            'norm1.weight',
-            'norm1.bias',
-            'attn.relative_position_bias_table',
-            'attn.relative_position_index',
-            'attn.qkv.weight',
-            'attn.qkv.bias',
-            'attn.proj.weight',
-            'attn.proj.bias',
-            'norm2.weight',
-            'norm2.bias',
-            'mlp.fc1.weight',
-            'mlp.fc1.bias',
-            'mlp.fc2.weight',
-            'mlp.fc2.bias',
-        ]
-        with torch.no_grad():
-            self.norm1.weight.copy_(weights['state_dict'][root + block_names[0]])
-            self.norm1.bias.copy_(weights['state_dict'][root + block_names[1]])
-            if self.attn_version == 'v1':
-                self.attn.relative_position_bias_table.copy_(weights['state_dict'][root + block_names[2]])
-            self.attn.relative_position_index.copy_(weights['state_dict'][root + block_names[3]])
-            self.attn.qkv.weight.copy_(weights['state_dict'][root + block_names[4]])
-            self.attn.qkv.bias.copy_(weights['state_dict'][root + block_names[5]])
-            self.attn.proj.weight.copy_(weights['state_dict'][root + block_names[6]])
-            self.attn.proj.bias.copy_(weights['state_dict'][root + block_names[7]])
-            self.norm2.weight.copy_(weights['state_dict'][root + block_names[8]])
-            self.norm2.bias.copy_(weights['state_dict'][root + block_names[9]])
-            self.mlp.linear1.weight.copy_(weights['state_dict'][root + block_names[10]])
-            self.mlp.linear1.bias.copy_(weights['state_dict'][root + block_names[11]])
-            self.mlp.linear2.weight.copy_(weights['state_dict'][root + block_names[12]])
-            self.mlp.linear2.bias.copy_(weights['state_dict'][root + block_names[13]])
-
     def forward(self, x, mask_matrix):
         shortcut = x
         if self.use_checkpoint:
@@ -561,8 +526,9 @@ class PatchMerging(nn.Module):
         '''
 
         super().__init__()
-        self.dim = dim
+        assert spatial_dims == 3, 'PatchMerging supports spatial_dims 3 only'
 
+        self.dim = dim
         self.input_resolution = input_resolution
         D, H, W = self.input_resolution
         self.merge_D = D % 2 == 0

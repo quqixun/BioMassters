@@ -4,8 +4,9 @@ import numpy as np
 
 from PIL import Image
 from tqdm import tqdm
-from ..process import *
 from os.path import join as opj
+
+from ..process import *
 from ..models import define_model
 
 
@@ -29,8 +30,6 @@ class BMPredictor(object):
             model = model.to(self.device)
             model.eval()
             self.models.append(model)
-
-        
 
         if process_method == 'log2':
             self.remove_outliers_func = remove_outliers_by_log2

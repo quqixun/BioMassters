@@ -3,9 +3,10 @@ import torch
 import datetime
 import numpy as np
 
+from torch.cuda.amp import autocast, GradScaler 
+
 from ..utils import *
 from ..process import *
-from torch.cuda.amp import autocast, GradScaler 
 
 
 class BMTrainer(BMBaseTrainer):
@@ -26,8 +27,8 @@ class BMTrainer(BMBaseTrainer):
             train_metrics = self._train_epoch(epoch, train_loader)
             val_metrics   = self._val_epoch(epoch, val_loader)
 
-            if val_metrics['RMSE'] < best_val_rmse:
-                best_val_rmse = val_metrics['RMSE']
+            if val_metrics['rmse'] < best_val_rmse:
+                best_val_rmse = val_metrics['rmse']
                 best_msg = basic_msg.format(best_val_rmse, epoch)
                 print('>>> Best Val Epoch - Lowest RMSE - Save Model <<<')
                 self._save_model()
@@ -67,11 +68,11 @@ class BMTrainer(BMBaseTrainer):
                 loss = 0.0
                 if self.rec_loss_func is not None:
                     rec_loss = self.rec_loss_func(pred, label)
-                    logger.update(LRec=rec_loss.item())
+                    logger.update(rec_loss=rec_loss.item())
                     loss += rec_loss
                 if self.sim_loss_func is not None:
                     sim_loss = self.sim_loss_func(pred, label)
-                    logger.update(LSim=sim_loss.item())
+                    logger.update(sim_loss=sim_loss.item())
                     loss += sim_loss
 
             loss4opt = loss / self.accum_iter
@@ -102,7 +103,7 @@ class BMTrainer(BMBaseTrainer):
 
             rmse = np.sqrt(np.mean((pred - label) ** 2, axis=(1, 2, 3)))
             rmse = np.mean(rmse).astype(float)
-            logger.update(RMSE=rmse)
+            logger.update(rmse=rmse)
 
         # import matplotlib.pyplot as plt
         # plt.figure()

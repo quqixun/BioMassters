@@ -72,14 +72,6 @@ class SwinUNETR(nn.Module):
             normalize: normalize output intermediate features in each stage.
             use_checkpoint: use gradient checkpointing for reduced memory usage.
             spatial_dims: number of spatial dims.
-
-        Examples::
-            # for 3D single channel input with size (96,96,96), 4-channel output and feature size of 48.
-            >>> net = SwinUNETR(image_size=(96,96,96), in_channels=1, out_channels=4, feature_size=48)
-            # for 3D 4-channel input with size (128,128,128), 3-channel output and (2,4,2,2) layers in each stage.
-            >>> net = SwinUNETR(image_size=(128,128,128), in_channels=4, out_channels=3, depths=(2,4,2,2))
-            # for 2D single channel input with size (96,96), 2-channel output and gradient checkpointing.
-            >>> net = SwinUNETR(image_size=(96,96), in_channels=3, out_channels=2, use_checkpoint=True, spatial_dims=2)
         '''
 
         super().__init__()
@@ -236,56 +228,6 @@ class SwinUNETR(nn.Module):
             UnetOutBlock(spatial_dims=2, in_channels=feature_size, out_channels=out_channels),
             nn.Sigmoid()
         )
-
-    def load_from(self, weights):
-
-        with torch.no_grad():
-            self.swinViT.patch_embed.proj.weight.copy_(weights["state_dict"]["module.patch_embed.proj.weight"])
-            self.swinViT.patch_embed.proj.bias.copy_(weights["state_dict"]["module.patch_embed.proj.bias"])
-            for bname, block in self.swinViT.layers1[0].blocks.named_children():
-                block.load_from(weights, n_block=bname, layer="layers1")
-            self.swinViT.layers1[0].downsample.reduction.weight.copy_(
-                weights["state_dict"]["module.layers1.0.downsample.reduction.weight"]
-            )
-            self.swinViT.layers1[0].downsample.norm.weight.copy_(
-                weights["state_dict"]["module.layers1.0.downsample.norm.weight"]
-            )
-            self.swinViT.layers1[0].downsample.norm.bias.copy_(
-                weights["state_dict"]["module.layers1.0.downsample.norm.bias"]
-            )
-            for bname, block in self.swinViT.layers2[0].blocks.named_children():
-                block.load_from(weights, n_block=bname, layer="layers2")
-            self.swinViT.layers2[0].downsample.reduction.weight.copy_(
-                weights["state_dict"]["module.layers2.0.downsample.reduction.weight"]
-            )
-            self.swinViT.layers2[0].downsample.norm.weight.copy_(
-                weights["state_dict"]["module.layers2.0.downsample.norm.weight"]
-            )
-            self.swinViT.layers2[0].downsample.norm.bias.copy_(
-                weights["state_dict"]["module.layers2.0.downsample.norm.bias"]
-            )
-            for bname, block in self.swinViT.layers3[0].blocks.named_children():
-                block.load_from(weights, n_block=bname, layer="layers3")
-            self.swinViT.layers3[0].downsample.reduction.weight.copy_(
-                weights["state_dict"]["module.layers3.0.downsample.reduction.weight"]
-            )
-            self.swinViT.layers3[0].downsample.norm.weight.copy_(
-                weights["state_dict"]["module.layers3.0.downsample.norm.weight"]
-            )
-            self.swinViT.layers3[0].downsample.norm.bias.copy_(
-                weights["state_dict"]["module.layers3.0.downsample.norm.bias"]
-            )
-            for bname, block in self.swinViT.layers4[0].blocks.named_children():
-                block.load_from(weights, n_block=bname, layer="layers4")
-            self.swinViT.layers4[0].downsample.reduction.weight.copy_(
-                weights["state_dict"]["module.layers4.0.downsample.reduction.weight"]
-            )
-            self.swinViT.layers4[0].downsample.norm.weight.copy_(
-                weights["state_dict"]["module.layers4.0.downsample.norm.weight"]
-            )
-            self.swinViT.layers4[0].downsample.norm.bias.copy_(
-                weights["state_dict"]["module.layers4.0.downsample.norm.bias"]
-            )
 
     def forward(self, x_in):
         hidden_states_out = self.swinViT(x_in, self.normalize)
