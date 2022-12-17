@@ -67,7 +67,7 @@ def main(args):
 
 if __name__ == '__main__':
 
-    parser = argparse.ArgumentParser(description='BioMassters Training')
+    parser = argparse.ArgumentParser(description='BioMassters Predicting')
     parser.add_argument('--data_root',      type=str, help='dir path of training data')
     parser.add_argument('--exp_root',       type=str, help='root dir of experiments')
     parser.add_argument('--output_root',    type=str, help='root dir of outputs')
