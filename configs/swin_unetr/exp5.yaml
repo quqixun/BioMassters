@@ -1,0 +1,55 @@
+---
+
+
+exp:  swin_unetr/exp5
+seed: 42
+cv:   5
+
+loader:
+  train_batch:   4
+  val_batch:     4
+  num_workers:   16
+  pin_memory:    true
+  apply_augment: true
+
+trainer:
+  epochs:     50
+  accum_iter: 2
+  ckpt_freq:  50
+  print_freq: 200
+
+loss:
+  rec:
+    mode:   mae
+    weight: 1.0
+
+optimizer:
+  mode:         adamw
+  lr:           0.001
+  betas:        [0.9, 0.999]
+  amsgrad:      true
+  weight_decay: 0.01
+
+scheduler:
+  min_lr: 0.0001
+  warmup: 5
+
+model:
+  name: swin_unetr
+  params:
+    image_size:     [12, 256, 256]
+    patch_size:     [1, 2, 2]
+    window_size:    [3, 7, 7]
+    in_channels:    15
+    out_channels:   1
+    depths:         [2, 2, 2, 2]
+    num_heads:      [3, 6, 12, 24]
+    feature_size:   48
+    norm_name:      batch
+    drop_rate:      0.0
+    attn_drop_rate: 0.0
+    drop_path_rate: 0.1
+    attn_version:   v2
+
+
+...

@@ -2,22 +2,22 @@
 
 
 device=3
-config_file=./configs/exp1.yaml
+# folds=0
+folds=3,4
+process=plain
+config_file_list=(
+    ./configs/swin_unetr/exp4.yaml
+    # ./configs/swin_unetr/exp5.yaml
+)
 
+for config_file in ${config_file_list[@]}; do
 
-CUDA_VISIBLE_DEVICES=$device \
-python train.py              \
-    --data_root      ./data/source       \
-    --exp_root       ./experiments/log2  \
-    --config_file    $config_file        \
-    --folds          3,4                 \
-    --process_method log2
+    CUDA_VISIBLE_DEVICES=$device \
+    python train.py              \
+        --data_root      ./data/source          \
+        --exp_root       ./experiments/$process \
+        --config_file    $config_file           \
+        --folds          $folds                 \
+        --process_method $process
 
-
-CUDA_VISIBLE_DEVICES=$device \
-python train.py              \
-    --data_root      ./data/source       \
-    --exp_root       ./experiments/plain \
-    --config_file    $config_file        \
-    --folds          0,1,2               \
-    --process_method plain
+done;

@@ -1,7 +1,7 @@
 ---
 
 
-exp:  swin_unetr/exp3
+exp:  swin_unetr/exp2
 seed: 42
 cv:   5
 
@@ -22,9 +22,6 @@ loss:
   rec:
     mode:   mae
     weight: 1.0
-  sim:
-    mode:   ssim
-    weight: 1.0
 
 optimizer:
   mode:         adamw
@@ -34,7 +31,7 @@ optimizer:
   weight_decay: 0.01
 
 scheduler:
-  min_lr: 0.0
+  min_lr: 0.0001
   warmup: 5
 
 model:
@@ -52,7 +49,7 @@ model:
     drop_rate:      0.0
     attn_drop_rate: 0.0
     drop_path_rate: 0.1
-    attn_version:   v2
+    attn_version:   v1
 
 
 ...

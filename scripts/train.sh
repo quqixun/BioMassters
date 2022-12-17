@@ -2,42 +2,21 @@
 
 
 device=0
-config_file=./configs/exp1.yaml
+folds=0
+# folds=1,2,3,4
+process=plain
+config_file_list=(
+    ./configs/vtnet/exp1.yaml
+)
 
+for config_file in ${config_file_list[@]}; do
 
-CUDA_VISIBLE_DEVICES=$device \
-python train.py              \
-    --data_root      ./data/source      \
-    --exp_root       ./experiments/log2 \
-    --config_file    $config_file       \
-    --folds          0,1,23,4           \
-    --process_method log2
+    CUDA_VISIBLE_DEVICES=$device \
+    python train.py              \
+        --data_root      ./data/source          \
+        --exp_root       ./experiments/$process \
+        --config_file    $config_file           \
+        --folds          $folds                 \
+        --process_method $process
 
-
-# CUDA_VISIBLE_DEVICES=$device \
-# python train.py              \
-#     --data_root      ./data/source       \
-#     --exp_root       ./experiments/plain \
-#     --config_file    $config_file        \
-#     --folds          0,1,2,3,4           \
-#     --process_method plain
-
-
-# CUDA_VISIBLE_DEVICES=$device \
-# python train.py              \
-#     --data_root      ./data/process_log2 \
-#     --exp_root       ./experiments/log2  \
-#     --config_file    ./configs/exp1.yaml \
-#     --folds          0,1,2,3,4           \
-#     --process_method log2                \
-#     --processed
-
-
-# CUDA_VISIBLE_DEVICES=$device \
-# python train.py              \
-#     --data_root      ./data/process_plain \
-#     --exp_root       ./experiments/plain  \
-#     --config_file    ./configs/exp1.yaml  \
-#     --folds          0,1,2,3,4            \
-#     --process_method plain                \
-#     --processed
+done;
