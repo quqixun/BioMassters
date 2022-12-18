@@ -138,6 +138,7 @@ class BMDataset(Dataset):
         # feature: (15, 12, 256, 256)
         label = label[0].transpose(2, 0, 1).astype(np.float32)
         # label: (1, 256, 256)
+
         return feature, label
 
 

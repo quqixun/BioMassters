@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 
 from piqa import SSIM
+from focal_frequency_loss import FocalFrequencyLoss as FFL
 
 
 class CharbonnierLoss(nn.Module):
@@ -29,8 +30,10 @@ class RecLoss(nn.Module):
             self.loss_func = nn.L1Loss()
         elif mode == 'charb':
             self.loss_func = CharbonnierLoss()
+        elif mode == 'ffl':
+            self.loss_func = FFL(loss_weight=1.0, alpha=1.0)
         else:
-            raise ValueError('unknowm rec loss mode')
+            raise ValueError('unknown rec loss mode')
 
     def forward(self, pred, label):
         return self.loss_func(pred, label) * self.weight
@@ -46,7 +49,7 @@ class SimLoss(nn.Module):
         if mode == 'ssim':
             self.sim_func = SSIM(window_size=11, sigma=1.5, n_channels=1)
         else:
-            raise ValueError('unknowm rec loss mode')
+            raise ValueError('unknown sim loss mode')
 
     def forward(self, pred, label):
         similarity = self.sim_func(pred, label)

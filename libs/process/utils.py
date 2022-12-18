@@ -75,12 +75,33 @@ def calculate_statistics(
     }
 
 
+# before exp5
+# def normalize(data, norm_stats, norm_method):
+#     assert norm_method in ['minmax', 'zscore']
+
+#     if norm_method == 'minmax':
+#         min_ = norm_stats['min']
+#         max_ = norm_stats['max']
+#         range_ = max_ - min_
+#         data = (data - min_) / range_
+#     elif norm_method == 'zscore':
+#         avg = norm_stats['avg']
+#         std = norm_stats['std']
+#         data = (data - avg) / std
+
+#     return data
+
+
+# start from exp6 and exp4-2
 def normalize(data, norm_stats, norm_method):
     assert norm_method in ['minmax', 'zscore']
 
+    min_ = norm_stats['min']
+    max_ = norm_stats['max']
+    data = np.where(data < min_, min_, data)
+    data = np.where(data > max_, max_, data)
+
     if norm_method == 'minmax':
-        min_ = norm_stats['min']
-        max_ = norm_stats['max']
         range_ = max_ - min_
         data = (data - min_) / range_
     elif norm_method == 'zscore':
