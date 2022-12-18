@@ -90,10 +90,10 @@ if __name__ == '__main__':
     parser.add_argument('--data_root',      type=str, help='dir path of training data')
     parser.add_argument('--exp_root',       type=str, help='root dir of experiments')
     parser.add_argument('--config_file',    type=str, help='yaml path of configs')
-    parser.add_argument('--folds',          type=str, help='list of folds, separated by ,')
     parser.add_argument('--process_method', type=str, help='method for processing, log2 or plain')
     parser.add_argument('--processed',      action='store_true', help='if data has been processed')
     parser.add_argument('--resume',         action='store_true', help='if resume from checkpoint')
+    parser.add_argument('--folds',          type=str, help='list of folds, separated by ,')
     args = parser.parse_args()
 
     check_train_args(args)

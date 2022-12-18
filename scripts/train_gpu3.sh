@@ -19,7 +19,7 @@ for config_file in ${config_file_list[@]}; do
         --data_root      ./data/source          \
         --exp_root       ./experiments/$process \
         --config_file    $config_file           \
-        --folds          $folds                 \
-        --process_method $process
+        --process_method $process               \
+        --folds          $folds
 
 done;
