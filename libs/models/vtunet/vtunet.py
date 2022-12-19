@@ -2,7 +2,7 @@ import torch
 import numpy as np
 import torch.nn as nn
 
-from .swin import SwinTransformer
+from .swin import SwinTransformerEncoder
 from typing import Sequence, Tuple, Union
 
 from monai.utils import ensure_tuple_rep
@@ -18,42 +18,42 @@ class VTUnet(nn.Module):
 
     def __init__(
         self,
-        image_size: Union[Sequence[int], int],
-        patch_size: Union[Sequence[int], int],
-        window_size: Union[Sequence[int], int],
-        in_channels: int,
-        out_channels: int,
-        depths: Sequence[int] = (2, 2, 2, 2),
-        num_heads: Sequence[int] = (3, 6, 12, 24),
-        feature_size: int = 24,
-        norm_name: Union[Tuple, str] = 'instance',
-        drop_rate: float = 0.0,
-        attn_drop_rate: float = 0.0,
-        drop_path_rate: float = 0.0,
-        attn_version: str = 'v1',
-        normalize: bool = True,
-        use_checkpoint: bool = False,
-        spatial_dims: int = 3,
+        image_size:       Union[Sequence[int], int],
+        patch_size:       Union[Sequence[int], int],
+        window_size:      Union[Sequence[int], int],
+        in_channels:      int,
+        out_channels:     int,
+        depths:           Sequence[int] = (2, 2, 2, 2),
+        num_heads:        Sequence[int] = (3, 6, 12, 24),
+        feature_size:     int = 24,
+        norm_name:        Union[Tuple, str] = 'batch',
+        drop_rate:        float = 0.0,
+        attn_drop_rate:   float = 0.0,
+        drop_path_rate:   float = 0.0,
+        attn_version:     str = 'v1',
+        normalize:        bool = True,
+        use_checkpoint:   bool = False,
+        spatial_dims:     int = 3,
         apply_cross_attn: bool = False
     ) -> None:
         '''
         Args:
-            image_size: dimension of input image.
-            patch_size: dimension of patch.
-            window_size: dimension of window.
-            in_channels: dimension of input channels.
-            out_channels: dimension of output channels.
-            feature_size: dimension of network feature size.
-            depths: number of layers in each stage.
-            num_heads: number of attention heads.
-            norm_name: feature normalization type and arguments.
-            drop_rate: dropout rate.
-            attn_drop_rate: attention dropout rate.
-            drop_path_rate: drop path rate.
-            attn_version: version of attention in swin transformer.
-            normalize: normalize output intermediate features in each stage.
-            use_checkpoint: use gradient checkpointing for reduced memory usage.
-            spatial_dims: number of spatial dims.
+            image_size:       dimension of input image.
+            patch_size:       dimension of patch.
+            window_size:      dimension of window.
+            in_channels:      dimension of input channels.
+            out_channels:     dimension of output channels.
+            feature_size:     dimension of network feature size.
+            depths:           number of layers in each stage.
+            num_heads:        number of attention heads.
+            norm_name:        feature normalization type and arguments.
+            drop_rate:        dropout rate.
+            attn_drop_rate:   attention dropout rate.
+            drop_path_rate:   drop path rate.
+            attn_version:     version of attention in swin transformer.
+            normalize:        normalize output intermediate features in each stage.
+            use_checkpoint:   use gradient checkpointing for reduced memory usage.
+            spatial_dims:     number of spatial dims.
             apply_cross_attn: if apply cross attention.
         '''
 
@@ -88,28 +88,33 @@ class VTUnet(nn.Module):
 
         self.normalize = normalize
 
-        self.swinViT = SwinTransformer(
-            image_size=image_size,
-            in_chans=in_channels,
-            embed_dim=feature_size,
-            window_size=window_size,
-            patch_size=patch_size,
-            depths=depths,
-            num_heads=num_heads,
-            mlp_ratio=4.0,
-            qkv_bias=True,
-            drop_rate=drop_rate,
-            attn_drop_rate=attn_drop_rate,
-            drop_path_rate=drop_path_rate,
-            attn_version=attn_version,
-            norm_layer=nn.LayerNorm,
-            use_checkpoint=use_checkpoint,
-            spatial_dims=spatial_dims
+        self.swinViT = SwinTransformerEncoder(
+            image_size       = image_size,
+            in_chans         = in_channels,
+            embed_dim        = feature_size,
+            window_size      = window_size,
+            patch_size       = patch_size,
+            depths           = depths,
+            num_heads        = num_heads,
+            mlp_ratio        = 4.0,
+            qkv_bias         = True,
+            drop_rate        = drop_rate,
+            attn_drop_rate   = attn_drop_rate,
+            drop_path_rate   = drop_path_rate,
+            attn_version     = attn_version,
+            norm_layer       = nn.LayerNorm,
+            use_checkpoint   = use_checkpoint,
+            spatial_dims     = spatial_dims,
+            apply_cross_attn = apply_cross_attn
         )
         resamples = self.swinViT.resamples
 
         self.out = nn.Sequential(
-            UnetOutBlock(spatial_dims=2, in_channels=feature_size, out_channels=out_channels),
+            UnetOutBlock(
+                spatial_dims = 2,
+                in_channels  = feature_size,
+                out_channels = out_channels
+            ),
             nn.Sigmoid()
         )
 
@@ -142,23 +147,24 @@ if __name__ == '__main__':
     window_size = (3, 7, 7)
     x = torch.rand(B, C, 12, 256, 256).cuda()
 
-    model = SwinUNETR(
-        image_size=image_size,
-        patch_size=patch_size,
-        window_size=window_size,
-        in_channels=C,
-        out_channels=1,
-        depths=(2, 2, 2, 2),
-        num_heads=(3, 6, 12, 24),
-        feature_size=24,
-        norm_name='batch',
-        drop_rate=0.0,
-        attn_drop_rate=0.0,
-        drop_path_rate=0.0,
-        attn_version='v2',
-        normalize=True,
-        use_checkpoint=False,
-        spatial_dims=3
+    model = VTUnet(
+        image_size       = image_size,
+        patch_size       = patch_size,
+        window_size      = window_size,
+        in_channels      = C,
+        out_channels     = 1,
+        depths           = (2, 2, 2, 2),
+        num_heads        = (3, 6, 12, 24),
+        feature_size     = 24,
+        norm_name        = 'batch',
+        drop_rate        = 0.0,
+        attn_drop_rate   = 0.0,
+        drop_path_rate   = 0.0,
+        attn_version     = 'v2',
+        normalize        = True,
+        use_checkpoint   = False,
+        spatial_dims     = 3,
+        apply_cross_attn = True
     )
     model.cuda()
 

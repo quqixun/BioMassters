@@ -21,8 +21,9 @@ def window_partition(x, window_size):
     Swin Transformer: Hierarchical Vision Transformer using Shifted Windows
     <https://arxiv.org/abs/2103.14030>'
     https://github.com/microsoft/Swin-Transformer
-     Args:
-        x: input tensor.
+
+    Args:
+        x:           input tensor.
         window_size: local window size.
     '''
     x_shape = x.size()
@@ -53,10 +54,11 @@ def window_reverse(windows, window_size, dims):
     Swin Transformer: Hierarchical Vision Transformer using Shifted Windows
     <https://arxiv.org/abs/2103.14030>'
     https://github.com/microsoft/Swin-Transformer
-     Args:
-        windows: windows tensor.
+
+    Args:
+        windows:     windows tensor.
         window_size: local window size.
-        dims: dimension values.
+        dims:        dimension values.
     '''
     if len(dims) == 4:
         b, d, h, w = dims
@@ -84,10 +86,11 @@ def get_window_size(x_size, window_size, shift_size=None):
     Swin Transformer: Hierarchical Vision Transformer using Shifted Windows
     <https://arxiv.org/abs/2103.14030>'
     https://github.com/microsoft/Swin-Transformer
-     Args:
-        x_size: input size.
+
+    Args:
+        x_size:      input size.
         window_size: local window size.
-        shift_size: window shifting size.
+        shift_size:  window shifting size.
     '''
 
     use_window_size = list(window_size)
@@ -115,22 +118,22 @@ class WindowAttentionV1(nn.Module):
 
     def __init__(
         self,
-        dim: int,
-        num_heads: int,
-        window_size: Sequence[int],
-        qkv_bias: bool = False,
-        attn_drop: float = 0.0,
-        proj_drop: float = 0.0,
-        apply_cross_attn = False
+        dim:              int,
+        num_heads:        int,
+        window_size:      Sequence[int],
+        qkv_bias:         bool = False,
+        attn_drop:        float = 0.0,
+        proj_drop:        float = 0.0,
+        apply_cross_attn: bool = False
     ) -> None:
         '''
         Args:
-            dim: number of feature channels.
-            num_heads: number of attention heads.
-            window_size: local window size.
-            qkv_bias: add a learnable bias to query, key, value.
-            attn_drop: attention dropout rate.
-            proj_drop: dropout rate of output.
+            dim:              number of feature channels.
+            num_heads:        number of attention heads.
+            window_size:      local window size.
+            qkv_bias:         add a learnable bias to query, key, value.
+            attn_drop:        attention dropout rate.
+            proj_drop:        dropout rate of output.
             apply_cross_attn: if apply cross attention.
         '''
 
@@ -245,22 +248,22 @@ class WindowAttentionV2(nn.Module):
 
     def __init__(
         self,
-        dim: int,
-        num_heads: int,
-        window_size: Sequence[int],
-        qkv_bias: bool = False,
-        attn_drop: float = 0.0,
-        proj_drop: float = 0.0,
-        apply_cross_attn = False
+        dim:              int,
+        num_heads:        int,
+        window_size:      Sequence[int],
+        qkv_bias:         bool = False,
+        attn_drop:        float = 0.0,
+        proj_drop:        float = 0.0,
+        apply_cross_attn: bool = False
     ) -> None:
         '''
         Args:
-            dim: number of feature channels.
-            num_heads: number of attention heads.
-            window_size: local window size.
-            qkv_bias: add a learnable bias to query, key, value.
-            attn_drop: attention dropout rate.
-            proj_drop: dropout rate of output.
+            dim:              number of feature channels.
+            num_heads:        number of attention heads.
+            window_size:      local window size.
+            qkv_bias:         add a learnable bias to query, key, value.
+            attn_drop:        attention dropout rate.
+            proj_drop:        dropout rate of output.
             apply_cross_attn: if apply cross attention.
         '''
 
@@ -410,35 +413,35 @@ class SwinTransformerBlock(nn.Module):
 
     def __init__(
         self,
-        dim: int,
-        num_heads: int,
-        window_size: Sequence[int],
-        shift_size: Sequence[int],
-        mlp_ratio: float = 4.0,
-        qkv_bias: bool = True,
-        drop: float = 0.0,
-        attn_drop: float = 0.0,
-        attn_version: str = 'v1',
-        drop_path: float = 0.0,
-        act_layer: str = 'GELU',
-        norm_layer: Type[LayerNorm] = nn.LayerNorm,
-        use_checkpoint: bool = False,
-        apply_cross_attn = False
+        dim:              int,
+        num_heads:        int,
+        window_size:      Sequence[int],
+        shift_size:       Sequence[int],
+        mlp_ratio:        float = 4.0,
+        qkv_bias:         bool = True,
+        drop:             float = 0.0,
+        attn_drop:        float = 0.0,
+        attn_version:     str = 'v1',
+        drop_path:        float = 0.0,
+        act_layer:        str = 'GELU',
+        norm_layer:       Type[LayerNorm] = nn.LayerNorm,
+        use_checkpoint:   bool = False,
+        apply_cross_attn: bool = False
     ) -> None:
         '''
         Args:
-            dim: number of feature channels.
-            num_heads: number of attention heads.
-            window_size: local window size.
-            shift_size: window shift size.
-            mlp_ratio: ratio of mlp hidden dim to embedding dim.
-            qkv_bias: add a learnable bias to query, key, value.
-            drop: dropout rate.
-            attn_drop: attention dropout rate.
-            drop_path: stochastic depth rate.
-            act_layer: activation layer.
-            norm_layer: normalization layer.
-            use_checkpoint: use gradient checkpointing for reduced memory usage.
+            dim:              number of feature channels.
+            num_heads:        number of attention heads.
+            window_size:      local window size.
+            shift_size:       window shift size.
+            mlp_ratio:        ratio of mlp hidden dim to embedding dim.
+            qkv_bias:         add a learnable bias to query, key, value.
+            drop:             dropout rate.
+            attn_drop:        attention dropout rate.
+            drop_path:        stochastic depth rate.
+            act_layer:        activation layer.
+            norm_layer:       normalization layer.
+            use_checkpoint:   use gradient checkpointing for reduced memory usage.
             apply_cross_attn: if apply cross attention.
         '''
 
@@ -456,22 +459,22 @@ class SwinTransformerBlock(nn.Module):
         if attn_version == 'v1':
             self.attn = WindowAttentionV1(
                 dim,
-                window_size=self.window_size,
-                num_heads=num_heads,
-                qkv_bias=qkv_bias,
-                attn_drop=attn_drop,
-                proj_drop=drop,
-                apply_cross_attn=apply_cross_attn
+                window_size      = self.window_size,
+                num_heads        = num_heads,
+                qkv_bias         = qkv_bias,
+                attn_drop        = attn_drop,
+                proj_drop        = drop,
+                apply_cross_attn = apply_cross_attn
             )
         elif attn_version == 'v2':
             self.attn = WindowAttentionV2(
                 dim,
-                window_size=self.window_size,
-                num_heads=num_heads,
-                qkv_bias=qkv_bias,
-                attn_drop=attn_drop,
-                proj_drop=drop,
-                apply_cross_attn=apply_cross_attn
+                window_size      = self.window_size,
+                num_heads        = num_heads,
+                qkv_bias         = qkv_bias,
+                attn_drop        = attn_drop,
+                proj_drop        = drop,
+                apply_cross_attn = apply_cross_attn
             )
         else:
             raise ValueError('unknown attn_version')
@@ -479,7 +482,13 @@ class SwinTransformerBlock(nn.Module):
         self.drop_path = DropPath(drop_path) if drop_path > 0.0 else nn.Identity()
         self.norm2 = norm_layer(dim)
         mlp_hidden_dim = int(dim * mlp_ratio)
-        self.mlp = Mlp(hidden_size=dim, mlp_dim=mlp_hidden_dim, act=act_layer, dropout_rate=drop, dropout_mode='swin')
+        self.mlp = Mlp(
+            hidden_size  = dim,
+            mlp_dim      = mlp_hidden_dim,
+            act          = act_layer,
+            dropout_rate = drop,
+            dropout_mode = 'swin'
+        )
 
     def forward_part1(self, x, mask_matrix, prev_qkv=None):
         x_shape = x.size()
@@ -605,16 +614,16 @@ class PatchMerging(nn.Module):
     def __init__(
         self,
         input_resolution,
-        dim: int,
-        norm_layer: Type[LayerNorm] = nn.LayerNorm,
+        dim:          int,
+        norm_layer:   Type[LayerNorm] = nn.LayerNorm,
         spatial_dims: int = 3
     ) -> None:
         '''
         Args:
-            input_resolution: resolution of input feature.
-            dim: number of feature channels.
-            norm_layer: normalization layer.
-            spatial_dims: number of spatial dims.
+            input_resolution: resolution of input feature maps.
+            dim:              number of feature channels.
+            norm_layer:       normalization layer.
+            spatial_dims:     number of spatial dims.
         '''
 
         super().__init__()
@@ -708,26 +717,27 @@ class PatchMerging(nn.Module):
         return x
 
 
-class PatchExpanding3D(nn.Module):
+class PatchExpanding(nn.Module):
 
     def __init__(
         self,
         input_resolution,
-        dim: int,
+        dim:            int,
         resample_scale: Sequence[int],
-        norm_layer: Type[LayerNorm] = nn.LayerNorm,
-        spatial_dims: int = 3
+        norm_layer:     Type[LayerNorm] = nn.LayerNorm,
+        spatial_dims:   int = 3
     ) -> None:
         '''
         Args:
-            input_resolution: resolution of input feature.
-            dim: number of feature channels.
-            resample_scale: resample scale at each dimention of input feature.
-            norm_layer: normalization layer.
-            spatial_dims: number of spatial dims.
+            input_resolution: resolution of input feature maps.
+            dim:              number of feature channels.
+            resample_scale:   resample scale at each dimention of input feature.
+            norm_layer:       normalization layer.
+            spatial_dims:     number of spatial dims.
         '''
 
         super().__init__()
+        assert spatial_dims == 3, 'PatchExpanding supports spatial_dims 3 only'
 
         self.input_resolution = input_resolution
         self.resample_scale = resample_scale
@@ -765,11 +775,12 @@ def compute_mask(dims, window_size, shift_size, device):
     Swin Transformer: Hierarchical Vision Transformer using Shifted Windows
     <https://arxiv.org/abs/2103.14030>'
     https://github.com/microsoft/Swin-Transformer
-     Args:
-        dims: dimension values.
+
+    Args:
+        dims:        dimension values.
         window_size: local window size.
-        shift_size: shift size.
-        device: device.
+        shift_size:  shift size.
+        device:      device.
     '''
 
     cnt = 0
@@ -810,34 +821,37 @@ class BasicLayer(nn.Module):
     def __init__(
         self,
         input_resolution: Sequence[int],
-        dim: int,
-        depth: int,
-        num_heads: int,
-        window_size: Sequence[int],
-        drop_path: list,
-        mlp_ratio: float = 4.0,
-        qkv_bias: bool = False,
-        drop: float = 0.0,
-        attn_drop: float = 0.0,
-        attn_version: str = 'v1',
-        norm_layer: Type[LayerNorm] = nn.LayerNorm,
-        resample: Optional[nn.Module] = None,
-        use_checkpoint: bool = False,
+        dim:              int,
+        depth:            int,
+        num_heads:        int,
+        window_size:      Sequence[int],
+        drop_path:        list,
+        mlp_ratio:        float = 4.0,
+        qkv_bias:         bool = False,
+        drop:             float = 0.0,
+        attn_drop:        float = 0.0,
+        attn_version:     str = 'v1',
+        norm_layer:       Type[LayerNorm] = nn.LayerNorm,
+        resample:         Optional[nn.Module] = None,
+        use_checkpoint:   bool = False,
+        apply_cross_attn: bool = False
     ) -> None:
         '''
         Args:
-            dim: number of feature channels.
-            depth: number of layers in each stage.
-            num_heads: number of attention heads.
-            window_size: local window size.
-            drop_path: stochastic depth rate.
-            mlp_ratio: ratio of mlp hidden dim to embedding dim.
-            qkv_bias: add a learnable bias to query, key, value.
-            drop: dropout rate.
-            attn_drop: attention dropout rate.
-            norm_layer: normalization layer.
-            resample: an optional resampling layer at the end of the layer.
-            use_checkpoint: use gradient checkpointing for reduced memory usage.
+            input_resolution: resolution of input feature maps.
+            dim:              number of feature channels.
+            depth:            number of layers in each stage.
+            num_heads:        number of attention heads.
+            window_size:      local window size.
+            drop_path:        stochastic depth rate.
+            mlp_ratio:        ratio of mlp hidden dim to embedding dim.
+            qkv_bias:         add a learnable bias to query, key, value.
+            drop:             dropout rate.
+            attn_drop:        attention dropout rate.
+            norm_layer:       normalization layer.
+            resample:         an optional resampling layer at the end of the layer.
+            use_checkpoint:   use gradient checkpointing for reduced memory usage.
+            apply_cross_attn: if apply cross attention.
         '''
 
         super().__init__()
@@ -849,18 +863,19 @@ class BasicLayer(nn.Module):
         self.blocks = nn.ModuleList(
             [
                 SwinTransformerBlock(
-                    dim=dim,
-                    num_heads=num_heads,
-                    window_size=self.window_size,
-                    shift_size=self.no_shift if (i % 2 == 0) else self.shift_size,
-                    mlp_ratio=mlp_ratio,
-                    qkv_bias=qkv_bias,
-                    drop=drop,
-                    attn_drop=attn_drop,
-                    attn_version=attn_version,
-                    drop_path=drop_path[i] if isinstance(drop_path, list) else drop_path,
-                    norm_layer=norm_layer,
-                    use_checkpoint=use_checkpoint,
+                    dim              = dim,
+                    num_heads        = num_heads,
+                    window_size      = self.window_size,
+                    shift_size       = self.no_shift if (i % 2 == 0) else self.shift_size,
+                    mlp_ratio        = mlp_ratio,
+                    qkv_bias         = qkv_bias,
+                    drop             = drop,
+                    attn_drop        = attn_drop,
+                    attn_version     = attn_version,
+                    drop_path        = drop_path[i] if isinstance(drop_path, list) else drop_path,
+                    norm_layer       = norm_layer,
+                    use_checkpoint   = use_checkpoint,
+                    apply_cross_attn = apply_cross_attn
                 )
                 for i in range(depth)
             ]
@@ -868,9 +883,10 @@ class BasicLayer(nn.Module):
         self.resample = resample
         if callable(self.resample):
             self.resample = resample(
-                input_resolution=input_resolution,
-                dim=dim, norm_layer=norm_layer,
-                spatial_dims=len(self.window_size)
+                input_resolution = input_resolution,
+                dim              = dim,
+                norm_layer       = norm_layer,
+                spatial_dims     = len(self.window_size)
             )
 
     def forward(self, x):
@@ -916,42 +932,44 @@ class SwinTransformerEncoder(nn.Module):
 
     def __init__(
         self,
-        image_size: Sequence[int],
-        in_chans: int,
-        embed_dim: int,
-        window_size: Sequence[int],
-        patch_size: Sequence[int],
-        depths: Sequence[int],
-        num_heads: Sequence[int],
-        mlp_ratio: float = 4.0,
-        qkv_bias: bool = True,
-        drop_rate: float = 0.0,
-        attn_drop_rate: float = 0.0,
-        drop_path_rate: float = 0.0,
-        attn_version: str = 'v1',
-        norm_layer: Type[LayerNorm] = nn.LayerNorm,
-        patch_norm: bool = False,
-        use_checkpoint: bool = False,
-        spatial_dims: int = 3,
+        image_size:       Sequence[int],
+        in_chans:         int,
+        embed_dim:        int,
+        window_size:      Sequence[int],
+        patch_size:       Sequence[int],
+        depths:           Sequence[int],
+        num_heads:        Sequence[int],
+        mlp_ratio:        float = 4.0,
+        qkv_bias:         bool = True,
+        drop_rate:        float = 0.0,
+        attn_drop_rate:   float = 0.0,
+        drop_path_rate:   float = 0.0,
+        attn_version:     str = 'v1',
+        norm_layer:       Type[LayerNorm] = nn.LayerNorm,
+        patch_norm:       bool = False,
+        use_checkpoint:   bool = False,
+        spatial_dims:     int = 3,
+        apply_cross_attn: bool = False
     ) -> None:
         '''
         Args:
-            image_size: dimension of input image.
-            in_chans: dimension of input channels.
-            embed_dim: number of linear projection output channels.
-            window_size: local window size.
-            patch_size: patch size.
-            depths: number of layers in each stage.
-            num_heads: number of attention heads.
-            mlp_ratio: ratio of mlp hidden dim to embedding dim.
-            qkv_bias: add a learnable bias to query, key, value.
-            drop_rate: dropout rate.
-            attn_drop_rate: attention dropout rate.
-            drop_path_rate: stochastic depth rate.
-            norm_layer: normalization layer.
-            patch_norm: add normalization after patch embedding.
-            use_checkpoint: use gradient checkpointing for reduced memory usage.
-            spatial_dims: spatial dimension.
+            image_size:       dimension of input image.
+            in_chans:         dimension of input channels.
+            embed_dim:        number of linear projection output channels.
+            window_size:      local window size.
+            patch_size:       patch size.
+            depths:           number of layers in each stage.
+            num_heads:        number of attention heads.
+            mlp_ratio:        ratio of mlp hidden dim to embedding dim.
+            qkv_bias:         add a learnable bias to query, key, value.
+            drop_rate:        dropout rate.
+            attn_drop_rate:   attention dropout rate.
+            drop_path_rate:   stochastic depth rate.
+            norm_layer:       normalization layer.
+            patch_norm:       add normalization after patch embedding.
+            use_checkpoint:   use gradient checkpointing for reduced memory usage.
+            spatial_dims:     spatial dimension.
+            apply_cross_attn: if apply cross attention.
         '''
 
         super().__init__()
@@ -961,11 +979,11 @@ class SwinTransformerEncoder(nn.Module):
         self.window_size = window_size
         self.patch_size = patch_size
         self.patch_embed = PatchEmbed(
-            patch_size=self.patch_size,
-            in_chans=in_chans,
-            embed_dim=embed_dim,
-            norm_layer=norm_layer if self.patch_norm else None,  # type: ignore
-            spatial_dims=spatial_dims,
+            patch_size   = self.patch_size,
+            in_chans     = in_chans,
+            embed_dim    = embed_dim,
+            norm_layer   = norm_layer if self.patch_norm else None,
+            spatial_dims = spatial_dims,
         )
         self.pos_drop = nn.Dropout(p=drop_rate)
         dpr = [x.item() for x in torch.linspace(0, drop_path_rate, sum(depths))]
@@ -978,20 +996,21 @@ class SwinTransformerEncoder(nn.Module):
         input_size = deepcopy(image_size)
         for i_layer in range(self.num_layers):
             layer = BasicLayer(
-                input_resolution=input_size,
-                dim=int(embed_dim * 2**i_layer),
-                depth=depths[i_layer],
-                num_heads=num_heads[i_layer],
-                window_size=self.window_size,
-                drop_path=dpr[sum(depths[:i_layer]) : sum(depths[: i_layer + 1])],
-                mlp_ratio=mlp_ratio,
-                qkv_bias=qkv_bias,
-                drop=drop_rate,
-                attn_drop=attn_drop_rate,
-                attn_version=attn_version,
-                norm_layer=norm_layer,
-                resample=PatchMerging,
-                use_checkpoint=use_checkpoint,
+                input_resolution = input_size,
+                dim              = int(embed_dim * 2**i_layer),
+                depth            = depths[i_layer],
+                num_heads        = num_heads[i_layer],
+                window_size      = self.window_size,
+                drop_path        = dpr[sum(depths[:i_layer]) : sum(depths[: i_layer + 1])],
+                mlp_ratio        = mlp_ratio,
+                qkv_bias         = qkv_bias,
+                drop             = drop_rate,
+                attn_drop        = attn_drop_rate,
+                attn_version     = attn_version,
+                norm_layer       = norm_layer,
+                resample         = PatchMerging,
+                use_checkpoint   = use_checkpoint,
+                apply_cross_attn = apply_cross_attn
             )
             if i_layer == 0:
                 self.layers1.append(layer)
