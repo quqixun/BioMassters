@@ -99,12 +99,12 @@ if __name__ == '__main__':
 
     download_features(
         download_root=args.download_root,
-        features_metadata_path=args.features_metadata
+        features_metadata_path=args.features_metadata,
         node=args.s3_node
     )
 
     download_training_labels(
         download_root=args.download_root,
-        training_labels_metadata_path=args.training_labels_metadata
+        training_labels_metadata_path=args.training_labels_metadata,
         node=args.s3_node
     )
