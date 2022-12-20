@@ -59,6 +59,14 @@ pip install -r requirements.txt
 
 ## 3. Training
 
+Train model with arguments:
+
+- ```data_root```: root directory of training dataset
+- ```exp_root```: root direcroty to save checkpoints, logs and models
+- ```config_file```: file path of configurations
+- ```process_method```: processing method to calculate statistics, ```log2``` or ```plain```
+- ```folds```: list of folds, separated by ```,```
+
 ```bash
 device=0
 process=plain
@@ -75,7 +83,16 @@ python train.py              \
     --folds          $folds
 ```
 
-### 4. Predicting
+## 4. Predicting
+
+Make predictions with almost the same arguments as training:
+
+- ```data_root```: root directory of training dataset
+- ```exp_root```: root direcroty to save checkpoints, logs and models
+- ```output_root```: root directory to save predictions
+- ```config_file```: file path of configurations
+- ```process_method```: processing method to calculate statistics, ```log2``` or ```plain```
+- ```folds```: list of folds, separated by ```,```
 
 ```bash
 device=0
