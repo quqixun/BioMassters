@@ -105,14 +105,14 @@ class BMTrainer(BMBaseTrainer):
             rmse = np.mean(rmse).astype(float)
             logger.update(rmse=rmse)
 
-        import matplotlib.pyplot as plt
-        plt.figure()
-        plt.subplot(121)
-        plt.imshow(pred[0, 0])
-        plt.subplot(122)
-        plt.imshow(label[0, 0])
-        plt.tight_layout()
-        plt.show()
+        # import matplotlib.pyplot as plt
+        # plt.figure()
+        # plt.subplot(121)
+        # plt.imshow(pred[0, 0])
+        # plt.subplot(122)
+        # plt.imshow(label[0, 0])
+        # plt.tight_layout()
+        # plt.show()
 
         metrics = {key: meter.global_avg
                    for key, meter in logger.meters.items()}
