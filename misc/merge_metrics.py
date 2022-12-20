@@ -43,4 +43,5 @@ if __name__ == '__main__':
 
     columns = ['process', 'model', 'exp'] + [f'val_rmse_fold{i}' for i in range(cv)] + ['val_rmse_avg']
     data_df = pd.DataFrame(data=data_list, columns=columns)
+    data_df.sort_values(by='val_rmse_avg', inplace=True)
     data_df.to_csv(output_path, index=False)
