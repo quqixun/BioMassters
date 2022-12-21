@@ -5,7 +5,7 @@ device=0
 process=plain
 folds=0,1,2,3,4
 data_root=./data/source
-config_file=./configs/swin_unetr/exp4.yaml
+config_file=./configs/swin_unetr/exp10.yaml
 
 CUDA_VISIBLE_DEVICES=$device \
 python predict.py            \

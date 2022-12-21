@@ -22,6 +22,9 @@ loss:
   rec:
     mode:   mae
     weight: 1.0
+  sim:
+    mode:   ssim
+    weight: 0.2
 
 optimizer:
   mode:         adamw

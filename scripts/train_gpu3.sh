@@ -2,8 +2,8 @@
 
 
 device=3
-folds=0
-# folds=3,4
+# folds=0
+folds=3,4
 process=plain
 config_file_list=(
     # ./configs/swin_unetr/exp4.yaml
