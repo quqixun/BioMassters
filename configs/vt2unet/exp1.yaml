@@ -52,13 +52,14 @@ model:
     depths:           [2, 2, 2, 2]
     num_heads:        [3, 6, 12, 24]
     mlp_ratio:        4.0
-    qkv_bias:         True
+    qkv_bias:         true
     drop_rate:        0.0
     attn_drop_rate:   0.0
     drop_path_rate:   0.1
-    patch_norm:       True
-    skip_connect:     True
-    apply_cross_attn: True
+    patch_norm:       true
+    skip_connect:     true
+    apply_cross_attn: true
+    apply_fpe:        false
 
 
 ...

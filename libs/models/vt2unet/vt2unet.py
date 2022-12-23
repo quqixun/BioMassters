@@ -18,7 +18,7 @@ class VT2UNet(nn.Module):
         image_size,
         patch_size,
         window_size,
-        input_dims       = 3,
+        input_dims       = 15,
         output_dims      = 1,
         embed_dims       = 96,
         depths           = [2, 2, 2, 2],
@@ -31,7 +31,8 @@ class VT2UNet(nn.Module):
         norm_layer       = nn.LayerNorm,
         patch_norm       = True,
         skip_connect     = True,
-        apply_cross_attn = True
+        apply_cross_attn = True,
+        apply_fpe        = False
     ):
         super(VT2UNet, self).__init__()
         assert len(depths) == len(num_heads)
@@ -146,7 +147,8 @@ class VT2UNet(nn.Module):
                 drop_path        = drop_path,
                 norm_layer       = norm_layer,
                 skip_connect     = skip_connect,
-                apply_cross_attn = apply_cross_attn
+                apply_cross_attn = apply_cross_attn,
+                apply_fpe        = apply_fpe
             )
             self.decoder.append(decoder_layer)
 
@@ -196,14 +198,6 @@ class VT2UNet(nn.Module):
             trunc_normal_(m.weight, std=0.02)
             if m.bias is not None:
                 nn.init.constant_(m.bias, 0.0)
-
-    @torch.jit.ignore
-    def no_weight_decay(self):
-        return {'absolute_pos_embed'}
-    
-    @torch.jit.ignore
-    def no_weight_decay_keywords(self):
-        return {'cpb_mlp', 'logits_scale', 'relative_position_bias_table'}
 
     def forward(self, x):
 
@@ -262,7 +256,8 @@ if __name__ == '__main__':
         norm_layer       = nn.LayerNorm,
         patch_norm       = True,
         skip_connect     = True,
-        apply_cross_attn = True
+        apply_cross_attn = True,
+        apply_fpe        = False
     )
     model.cuda()
 

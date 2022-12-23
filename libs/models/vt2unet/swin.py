@@ -553,7 +553,8 @@ class SwinTransformerBlock(nn.Module):
         drop_path        = 0.0,
         act_layer        = nn.GELU,
         norm_layer       = nn.LayerNorm,
-        apply_cross_attn = False
+        apply_cross_attn = False,
+        apply_fpe        = False
     ):
         super(SwinTransformerBlock, self).__init__()
 
@@ -596,8 +597,10 @@ class SwinTransformerBlock(nn.Module):
         )
 
         # cross attention
+        self.apply_fpe = False
         self.apply_cross_attn = apply_cross_attn
         if self.apply_cross_attn:
+            self.apply_fpe = apply_fpe
             self.cross_attn = WindowAttentionV2(
                 input_dims,
                 num_heads,
@@ -702,10 +705,11 @@ class SwinTransformerBlock(nn.Module):
             cross_out = cross_out + self.drop_path(self.norm2(self.mlp(cross_out)))
             out = 0.5 * out + 0.5 * cross_out
 
-            # fourier feature positional encoding
-            FPE = PositionalEncoding(out.shape[4])
-            pos_embed = self.norm2(self.mlp(FPE(out)))
-            out = out + pos_embed
+            if self.apply_fpe:
+                # fourier feature positional encoding
+                FPE = PositionalEncoding(out.shape[4])
+                pos_embed = self.norm2(self.mlp(FPE(out)))
+                out = out + pos_embed
 
         return out, qkv
 
@@ -725,7 +729,8 @@ class BasicLayer(nn.Module):
         drop_path        = 0.0,
         norm_layer       = nn.LayerNorm,
         skip_connect     = False,
-        apply_cross_attn = False
+        apply_cross_attn = False,
+        apply_fpe        = False
     ):
         super(BasicLayer, self).__init__()
 
@@ -761,7 +766,8 @@ class BasicLayer(nn.Module):
                 attn_drop        = attn_drop,
                 drop_path        = cur_drop_path,
                 norm_layer       = norm_layer,
-                apply_cross_attn = apply_cross_attn
+                apply_cross_attn = apply_cross_attn,
+                apply_fpe        = apply_fpe
             )
 
             self.blocks.append(block)
