@@ -1,7 +1,7 @@
 ---
 
 
-exp:  swin_unetr/exp13
+exp:  swin_unetr/exp14
 seed: 42
 cv:   5
 
@@ -27,7 +27,7 @@ loss:
     weight: 1.0
   sim:
     mode:   ssim
-    weight: 0.5
+    weight: 1.0
 
 optimizer:
   mode:         adamw
