@@ -69,11 +69,11 @@ class BMPredictor(object):
 
             pred = np.mean(preds, axis=0)
 
-            import matplotlib.pyplot as plt
-            plt.figure()
-            plt.imshow(pred)
-            plt.tight_layout()
-            plt.show()
+            # import matplotlib.pyplot as plt
+            # plt.figure()
+            # plt.imshow(pred)
+            # plt.tight_layout()
+            # plt.show()
 
             pred = Image.fromarray(pred)
             output_path = opj(output_dir, f'{subject}_agbm.tif')
