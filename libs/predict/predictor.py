@@ -36,6 +36,18 @@ class BMPredictor(object):
         elif process_method == 'plain':
             self.remove_outliers_func = remove_outliers_by_plain
 
+        self.months_list = configs.loader.months_list
+        if configs.loader.months_list == 'all':
+            self.months_list = list(range(12))
+
+        self.s1_index_list = configs.loader.s1_index_list
+        if configs.loader.s1_index_list == 'all':
+            self.s1_index_list = list(range(4))
+        
+        self.s2_index_list = configs.loader.s2_index_list
+        if configs.loader.s2_index_list == 'all':
+            self.s2_index_list = list(range(11))
+
     @torch.no_grad()
     def forward(self, data_dir, output_dir):
         os.makedirs(output_dir, exist_ok=True)
@@ -57,11 +69,11 @@ class BMPredictor(object):
 
             pred = np.mean(preds, axis=0)
 
-            # import matplotlib.pyplot as plt
-            # plt.figure()
-            # plt.imshow(pred)
-            # plt.tight_layout()
-            # plt.show()
+            import matplotlib.pyplot as plt
+            plt.figure()
+            plt.imshow(pred)
+            plt.tight_layout()
+            plt.show()
 
             pred = Image.fromarray(pred)
             output_path = opj(output_dir, f'{subject}_agbm.tif')
@@ -72,20 +84,20 @@ class BMPredictor(object):
 
         # loads S1 and S2 features
         feature_list = []
-        for month in range(12):
+        for month in self.months_list:
             s1_path = opj(subject_dir, 'S1', f'{subject}_S1_{month:02d}.tif')
             s2_path = opj(subject_dir, 'S2', f'{subject}_S2_{month:02d}.tif')
             s1 = read_raster(s1_path, True, S1_SHAPE)
             s2 = read_raster(s2_path, True, S2_SHAPE)
 
             s1_list = []
-            for index in range(4):
+            for index in self.s1_index_list:
                 s1i = self.remove_outliers_func(s1[index], 'S1', index)
                 s1i = normalize(s1i, self.norm_stats['S1'][index], 'zscore')
                 s1_list.append(s1i)
 
             s2_list = []
-            for index in range(11):
+            for index in self.s2_index_list:
                 s2i = self.remove_outliers_func(s2[index], 'S2', index)
                 s2i = normalize(s2i, self.norm_stats['S2'][index], 'zscore')
                 s2_list.append(s2i)
@@ -96,7 +108,7 @@ class BMPredictor(object):
         feature = np.concatenate(feature_list, axis=0)
         feature = feature.transpose(3, 0, 1, 2).astype(np.float32)
         feature = np.expand_dims(feature, axis=0)
-        # feature: (1, 15, 12, 256, 256)
+        # feature: (1, F, M, 256, 256)
 
         feature = torch.from_numpy(feature)
         feature = feature.to(self.device)

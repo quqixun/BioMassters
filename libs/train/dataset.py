@@ -16,14 +16,16 @@ from ..process import *
 class BMDataset(Dataset):
 
     def __init__(
-        self, mode, data_list, augment=False, norm_stats=None,
-        processed=True, process_method=None
+        self, mode, data_list, norm_stats, augment=False,
+        process_method='plain', s1_index_list='all',
+        s2_index_list='all', months_list='all'
     ):
         super(BMDataset, self).__init__()
+        assert norm_stats is not None
+        assert process_method in ['log2', 'plain']
 
         self.mode           = mode
         self.augment        = augment
-        self.processed      = processed
         self.transform      = None
         self.data_list      = data_list
         self.norm_stats     = norm_stats
@@ -36,35 +38,27 @@ class BMDataset(Dataset):
                 V.RandomRotate90((1, 2), p=0.2)
             ], p=1.0)
 
-        if self.processed:
-            self.load_data_func = self._load_processed_data
-        else:
-            assert self.norm_stats is not None
-            assert self.process_method in ['log2', 'plain']
+        if process_method == 'log2':
+            self.remove_outliers_func = remove_outliers_by_log2
+        elif process_method == 'plain':
+            self.remove_outliers_func = remove_outliers_by_plain
 
-            self.load_data_func = self._load_original_data
-            if process_method == 'log2':
-                self.remove_outliers_func = remove_outliers_by_log2
-            elif process_method == 'plain':
-                self.remove_outliers_func = remove_outliers_by_plain
+        self.months_list = months_list
+        if months_list == 'all':
+            self.months_list = list(range(12))
+
+        self.s1_index_list = s1_index_list
+        if s1_index_list == 'all':
+            self.s1_index_list = list(range(4))
+        
+        self.s2_index_list = s2_index_list
+        if s2_index_list == 'all':
+            self.s2_index_list = list(range(11))
 
     def __len__(self):
         return len(self.data_list)
 
-    def _load_processed_data(self, subject_path):
-
-        with open(subject_path, 'rb') as f:
-            data = pickle.load(f)
-
-        if self.mode == 'train':
-            label = data['label']
-        elif self.mode == 'val':
-            label = data['label_src']
-        feature = data['feature']
-
-        return label, feature
-
-    def _load_original_data(self, subject_path):
+    def _load_data(self, subject_path):
 
         subject = os.path.basename(subject_path)
 
@@ -79,20 +73,20 @@ class BMDataset(Dataset):
 
         # loads S1 and S2 features
         feature_list = []
-        for month in range(12):
+        for month in self.months_list:
             s1_path = opj(subject_path, 'S1', f'{subject}_S1_{month:02d}.tif')
             s2_path = opj(subject_path, 'S2', f'{subject}_S2_{month:02d}.tif')
             s1 = read_raster(s1_path, True, S1_SHAPE)
             s2 = read_raster(s2_path, True, S2_SHAPE)
 
             s1_list = []
-            for index in range(4):
+            for index in self.s1_index_list:
                 s1i = self.remove_outliers_func(s1[index], 'S1', index)
                 s1i = normalize(s1i, self.norm_stats['S1'][index], 'zscore')
                 s1_list.append(s1i)
 
             s2_list = []
-            for index in range(11):
+            for index in self.s2_index_list:
                 s2i = self.remove_outliers_func(s2[index], 'S2', index)
                 s2i = normalize(s2i, self.norm_stats['S2'][index], 'zscore')
                 s2_list.append(s2i)
@@ -107,9 +101,9 @@ class BMDataset(Dataset):
     def __getitem__(self, index):
 
         subject_path = self.data_list[index]
-        label, feature = self.load_data_func(subject_path)
-        # label:   ( 1, 256, 256,  1)
-        # feature: (12, 256, 256, 15)
+        label, feature = self._load_data(subject_path)
+        # label:   (1, 256, 256, 1)
+        # feature: (M, 256, 256, F)
 
         if self.augment:
             data = {'image': feature, 'mask': label}
@@ -119,7 +113,7 @@ class BMDataset(Dataset):
                 label = label[:1]
 
         # import matplotlib.pyplot as plt
-        # for m in range(feature.shape[0]):
+        # for i, m in enumerate(self.months_list):
         #     subject = os.path.basename(subject_path)
         #     plt.figure(f'{subject} - {m:02d}', figsize=(15, 15))
         #     plt.subplot(4, 4, 1)
@@ -129,13 +123,13 @@ class BMDataset(Dataset):
         #     for f in range(feature.shape[-1]):
         #         plt.subplot(4, 4, f + 2)
         #         plt.title(f'M{m}-F{f + 1}')
-        #         plt.imshow(feature[m, :, :, f], cmap='coolwarm')
+        #         plt.imshow(feature[i, :, :, f], cmap='coolwarm')
         #         plt.axis('off')
         #     plt.tight_layout()
         #     plt.show()
 
         feature = feature.transpose(3, 0, 1, 2).astype(np.float32)
-        # feature: (15, 12, 256, 256)
+        # feature: (F, M, 256, 256)
         label = label[0].transpose(2, 0, 1).astype(np.float32)
         # label: (1, 256, 256)
 
@@ -144,7 +138,7 @@ class BMDataset(Dataset):
 
 def get_dataloader(
     mode, data_list, configs, norm_stats=None,
-    processed=True, process_method=None
+    process_method='plain'
 ):
     assert mode in ['train', 'val']
 
@@ -162,10 +156,12 @@ def get_dataloader(
     dataset = BMDataset(
         mode           = mode,
         data_list      = data_list,
-        augment        = augment,
         norm_stats     = norm_stats,
-        processed      = processed,
-        process_method = process_method
+        augment        = augment,
+        process_method = process_method,
+        s1_index_list  = configs.s1_index_list,
+        s2_index_list  = configs.s2_index_list,
+        months_list    = configs.months_list,
     )
 
     dataloader = DataLoader(
