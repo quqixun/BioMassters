@@ -28,7 +28,7 @@ def main(args):
     with open(splits_path, 'rb') as f:
         splits = pickle.load(f)
 
-    stats_file = 'stats.pkl' if args.processed else f'stats_{args.process_method}.pkl'
+    stats_file = f'stats_{args.process_method}.pkl'
     stats_path = os.path.join(args.data_root, stats_file)
     with open(stats_path, 'rb') as f:
         stats = pickle.load(f)
@@ -67,7 +67,6 @@ def main(args):
         loader_kwargs = dict(
             configs        = configs.loader,
             norm_stats     = stats,
-            processed      = args.processed,
             process_method = args.process_method
         )
         train_loader = get_dataloader('train', train_list, **loader_kwargs)
@@ -90,10 +89,9 @@ if __name__ == '__main__':
     parser.add_argument('--data_root',      type=str, help='dir path of training data')
     parser.add_argument('--exp_root',       type=str, help='root dir of experiments')
     parser.add_argument('--config_file',    type=str, help='yaml path of configs')
-    parser.add_argument('--process_method', type=str, help='method for processing, log2 or plain')
-    parser.add_argument('--processed',      action='store_true', help='if data has been processed')
+    parser.add_argument('--process_method', type=str, default='plain', help='method for processing, log2 or plain')
     parser.add_argument('--resume',         action='store_true', help='if resume from checkpoint')
-    parser.add_argument('--folds',          type=str, help='list of folds, separated by ,')
+    parser.add_argument('--folds',          type=str, default='0,1,2,3,4', help='list of folds, separated by ,')
     args = parser.parse_args()
 
     check_train_args(args)
