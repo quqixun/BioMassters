@@ -1,7 +1,7 @@
 ---
 
 
-exp:  swin_unetr/exp3
+exp:  swin_unetr/exp11
 seed: 42
 cv:   5
 
@@ -10,7 +10,10 @@ loader:
   val_batch:     4
   num_workers:   16
   pin_memory:    true
-  apply_augment: true
+  apply_augment: false
+  s1_index_list: all
+  s2_index_list: all
+  months_list:   [6, 7, 8, 9, 10, 11]
 
 trainer:
   epochs:     50
@@ -22,6 +25,9 @@ loss:
   rec:
     mode:   mae
     weight: 1.0
+  sim:
+    mode:   ssim
+    weight: 0.2
 
 optimizer:
   mode:         adamw
@@ -37,19 +43,19 @@ scheduler:
 model:
   name: swin_unetr
   params:
-    image_size:     [12, 256, 256]
+    image_size:     [6, 256, 256]
     patch_size:     [1, 2, 2]
     window_size:    [3, 7, 7]
     in_channels:    15
     out_channels:   1
     depths:         [2, 2, 2, 2]
     num_heads:      [3, 6, 12, 24]
-    feature_size:   48
+    feature_size:   72
     norm_name:      batch
     drop_rate:      0.0
     attn_drop_rate: 0.0
     drop_path_rate: 0.1
-    attn_version:   v1
+    attn_version:   v2
 
 
 ...

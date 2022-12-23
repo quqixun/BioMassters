@@ -2,8 +2,8 @@
 
 
 device=2
-# folds=0
-folds=1,2
+folds=0
+# folds=1,2
 process=plain
 config_file_list=(
     # ./configs/swin_unetr/exp2.yaml
@@ -12,7 +12,9 @@ config_file_list=(
     # ./configs/swin_unetr/exp4-2.yaml
     # ./configs/swin_unetr/exp6.yaml
     # ./configs/swin_unetr/exp7.yaml
-    ./configs/swin_unetr/exp10.yaml
+    # ./configs/swin_unetr/exp10.yaml
+    ./configs/swin_unetr/exp11.yaml
+    ./configs/swin_unetr/exp12.yaml
 )
 
 for config_file in ${config_file_list[@]}; do
