@@ -74,6 +74,10 @@ class BMTrainer(BMBaseTrainer):
                     sim_loss = self.sim_loss_func(pred, label)
                     logger.update(sim_loss=sim_loss.item())
                     loss += sim_loss
+                if self.ff_loss_func is not None:
+                    ff_loss = self.ff_loss_func(pred, label)
+                    logger.update(ff_loss=ff_loss.item())
+                    loss += ff_loss
 
             loss4opt = loss / self.accum_iter
             self.scaler.scale(loss4opt).backward()
