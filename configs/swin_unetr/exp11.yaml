@@ -23,11 +23,11 @@ trainer:
 
 loss:
   rec:
-    mode:   mae
+    mode:   charb
     weight: 1.0
   sim:
     mode:   ssim
-    weight: 0.5
+    weight: 0.2
 
 optimizer:
   mode:         adamw

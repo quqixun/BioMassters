@@ -11,8 +11,7 @@ config_file_list=(
     # ./configs/swin_unetr/exp8.yaml
     # ./configs/swin_unetr/exp9.yaml
     # ./configs/swin_unetr/exp10.yaml
-    ./configs/swin_unetr/exp13.yaml
-    ./configs/swin_unetr/exp14.yaml
+    ./configs/swin_unetr/exp12.yaml
     # ./configs/vt2unet/exp1.yaml
 )
 

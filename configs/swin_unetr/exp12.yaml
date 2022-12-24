@@ -27,7 +27,9 @@ loss:
     weight: 1.0
   sim:
     mode:   ssim
-    weight: 1.0
+    weight: 0.2
+  ff:
+    weight: 10.0
 
 optimizer:
   mode:         adamw

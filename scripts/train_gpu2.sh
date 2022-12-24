@@ -14,7 +14,7 @@ config_file_list=(
     # ./configs/swin_unetr/exp7.yaml
     # ./configs/swin_unetr/exp10.yaml
     ./configs/swin_unetr/exp11.yaml
-    ./configs/swin_unetr/exp12.yaml
+    # ./configs/swin_unetr/exp12.yaml
 )
 
 for config_file in ${config_file_list[@]}; do
