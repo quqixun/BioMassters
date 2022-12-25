@@ -17,7 +17,7 @@ loader:
 
 trainer:
   epochs:     50
-  accum_iter: 2
+  accum_iter: 1
   ckpt_freq:  50
   print_freq: 200
 
@@ -28,8 +28,6 @@ loss:
   sim:
     mode:   ssim
     weight: 0.2
-  ff:
-    weight: 10.0
 
 optimizer:
   mode:         adamw
@@ -53,7 +51,7 @@ model:
     depths:         [2, 2, 2, 2]
     num_heads:      [3, 6, 12, 24]
     feature_size:   72
-    norm_name:      batch
+    norm_name:      instance
     drop_rate:      0.0
     attn_drop_rate: 0.0
     drop_path_rate: 0.1

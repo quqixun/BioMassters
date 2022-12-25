@@ -23,7 +23,7 @@ trainer:
 
 loss:
   rec:
-    mode:   charb
+    mode:   mae
     weight: 1.0
   sim:
     mode:   ssim
@@ -51,7 +51,7 @@ model:
     depths:         [2, 2, 2, 2]
     num_heads:      [3, 6, 12, 24]
     feature_size:   72
-    norm_name:      batch
+    norm_name:      instance
     drop_rate:      0.0
     attn_drop_rate: 0.0
     drop_path_rate: 0.1
