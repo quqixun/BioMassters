@@ -6,9 +6,9 @@ folds=0
 # folds=1,2
 process=plain
 config_file_list=(
-    ./configs/swin_unetr/exp11.yaml
-    # ./configs/swin_unetr/exp15.yaml
-    # ./configs/swin_unetr/exp16.yaml
+    ./configs/swin_unetr/exp13.yaml
+    ./configs/swin_unetr/exp14.yaml
+    ./configs/swin_unetr/exp15.yaml
 )
 
 for config_file in ${config_file_list[@]}; do

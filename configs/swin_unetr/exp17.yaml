@@ -50,7 +50,7 @@ model:
     out_channels:   1
     depths:         [2, 2, 2, 2]
     num_heads:      [3, 6, 12, 24]
-    feature_size:   48
+    feature_size:   72
     norm_name:      batch
     drop_rate:      0.0
     attn_drop_rate: 0.0
