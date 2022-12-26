@@ -2,7 +2,6 @@ __all__ = ['get_dataloader']
 
 
 import os
-import pickle
 import numpy as np
 import volumentations as V
 
@@ -33,9 +32,9 @@ class BMDataset(Dataset):
 
         if self.augment:
             self.transform = V.Compose([
-                V.Flip(1, p=0.2),
-                V.Flip(2, p=0.2),
-                V.RandomRotate90((1, 2), p=0.2)
+                V.Flip(1, p=0.1),
+                V.Flip(2, p=0.1),
+                V.RandomRotate90((1, 2), p=0.1)
             ], p=1.0)
 
         if process_method == 'log2':
