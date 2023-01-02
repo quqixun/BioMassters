@@ -52,7 +52,6 @@ class BMBaseTrainer(object):
         self.ff_loss_func = None
         if ff_kwargs is not None:
             self.ff_loss_func = FFLoss(**ff_kwargs)
-            # self.ff_loss_func.to(self.device)
 
         # instantiates optimizer
         if configs.optimizer.mode == 'adamw':

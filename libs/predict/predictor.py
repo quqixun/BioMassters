@@ -7,12 +7,13 @@ from tqdm import tqdm
 from os.path import join as opj
 
 from ..process import *
+from .utils import tta, untta
 from ..models import define_model
 
 
 class BMPredictor(object):
 
-    def __init__(self, model_paths, configs, norm_stats, process_method):
+    def __init__(self, model_paths, configs, norm_stats, process_method='plain'):
 
         self.norm_stats = norm_stats
         self.process_method = process_method
@@ -49,13 +50,15 @@ class BMPredictor(object):
             self.s2_index_list = list(range(11))
 
     @torch.no_grad()
-    def forward(self, data_dir, output_dir):
+    def predict(self, data_dir, output_dir):
         os.makedirs(output_dir, exist_ok=True)
 
         subjects = os.listdir(data_dir)
         for subject in tqdm(subjects, ncols=88):
             subject_dir = opj(data_dir, subject)
             feature = self._load_data(subject_dir)
+            feature = torch.from_numpy(feature)
+            feature = feature.to(self.device)
 
             preds = []
             for model in self.models:
@@ -66,6 +69,43 @@ class BMPredictor(object):
                     self.process_method
                 )
                 preds.append(pred)
+
+            pred = np.mean(preds, axis=0)
+
+            # import matplotlib.pyplot as plt
+            # plt.figure()
+            # plt.imshow(pred)
+            # plt.tight_layout()
+            # plt.show()
+
+            pred = Image.fromarray(pred)
+            output_path = opj(output_dir, f'{subject}_agbm.tif')
+            pred.save(output_path, format='TIFF', save_all=True)
+
+    @torch.no_grad()
+    def predict_tta(self, data_dir, output_dir):
+        os.makedirs(output_dir, exist_ok=True)
+
+        subjects = os.listdir(data_dir)
+        for subject in tqdm(subjects, ncols=88):
+            subject_dir = opj(data_dir, subject)
+            feature = self._load_data(subject_dir)
+
+            preds = []
+            for no in range(4):
+                feature_tta = tta(feature, no=no)
+                feature_tta = torch.Tensor(feature_tta)
+                feature_tta = feature_tta.to(self.device)
+
+                for model in self.models:
+                    pred = model(feature_tta)
+                    pred = pred.cpu().numpy()[0, 0]
+                    pred = untta(pred, no=no)
+                    pred = recover_label(
+                        pred, self.norm_stats['label'],
+                        self.process_method
+                    )
+                    preds.append(pred)
 
             pred = np.mean(preds, axis=0)
 
@@ -110,6 +150,4 @@ class BMPredictor(object):
         feature = np.expand_dims(feature, axis=0)
         # feature: (1, F, M, 256, 256)
 
-        feature = torch.from_numpy(feature)
-        feature = feature.to(self.device)
         return feature
