@@ -73,7 +73,11 @@ def main(args):
         val_loader   = get_dataloader('val',   val_list,   **loader_kwargs)
 
         # initialize trainer
-        trainer = BMTrainer(configs, exp_dir, args.resume)
+        trainer = BMTrainer(
+            configs = configs,
+            exp_dir = exp_dir,
+            resume  = args.resume
+        )
 
         # training model
         trainer.forward(train_loader, val_loader)
