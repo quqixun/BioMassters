@@ -19,6 +19,7 @@ class BMTrainer(BMBaseTrainer):
         self.norm_stats = val_loader.dataset.norm_stats['label']
         self.process_method = val_loader.dataset.process_method
 
+        prev_best_epoch = 0
         best_val_rmse = np.inf
         start_time = time.time()
         basic_msg = '- Best Val RMSE:{:.4f} at Epoch:{}'
@@ -28,6 +29,7 @@ class BMTrainer(BMBaseTrainer):
             val_metrics   = self._val_epoch(epoch, val_loader)
 
             if val_metrics['rmse'] < best_val_rmse:
+                prev_best_epoch = epoch
                 best_val_rmse = val_metrics['rmse']
                 best_msg = basic_msg.format(best_val_rmse, epoch)
                 print('>>> Best Val Epoch - Lowest RMSE - Save Model <<<')
@@ -40,6 +42,11 @@ class BMTrainer(BMBaseTrainer):
             # write logs
             self._save_logs(epoch, train_metrics, val_metrics)
             print()
+
+            if self.early_stop is not None:
+                if epoch - prev_best_epoch >= self.early_stop:
+                    print('- Early Stopping Since Last Best Val epoch')
+                    break
 
         print(best_msg)
         total_time = time.time() - start_time

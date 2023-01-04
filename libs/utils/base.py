@@ -28,6 +28,7 @@ class BMBaseTrainer(object):
         self.ckpt_freq   = configs.trainer.ckpt_freq
         self.accum_iter  = configs.trainer.accum_iter
         self.print_freq  = configs.trainer.print_freq
+        self.early_stop  = configs.trainer.early_stop
         self.device      = 'cuda' if torch.cuda.is_available() else 'cpu'
 
         # instantiates model
