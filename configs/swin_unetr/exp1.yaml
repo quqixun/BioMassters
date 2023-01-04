@@ -20,6 +20,7 @@ trainer:
   accum_iter: 2
   ckpt_freq:  50
   print_freq: 200
+  early_stop: null
 
 loss:
   rec:
