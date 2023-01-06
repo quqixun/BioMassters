@@ -94,7 +94,7 @@ class BMPredictor(object):
             preds = []
             for no in range(4):
                 feature_tta = tta(feature, no=no)
-                feature_tta = torch.Tensor(feature_tta)
+                feature_tta = torch.from_numpy(feature_tta)
                 feature_tta = feature_tta.to(self.device)
 
                 for model in self.models:
@@ -110,8 +110,11 @@ class BMPredictor(object):
             pred = np.mean(preds, axis=0)
 
             # import matplotlib.pyplot as plt
-            # plt.figure()
-            # plt.imshow(pred)
+            # plt.figure(figsize=(10, 20))
+            # for i in range(len(preds)):
+            #     plt.subplot(4, 5, i + 1)
+            #     plt.imshow(preds[i])
+            #     plt.axis('off')
             # plt.tight_layout()
             # plt.show()
 
