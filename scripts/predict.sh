@@ -6,7 +6,7 @@ process=plain
 folds=0,1,2,3,4
 apply_tta=false
 data_root=./data/source
-config_file=./configs/swin_unetr/exp14.yaml
+config_file=./configs/swin_unetr/exp19.yaml
 
 CUDA_VISIBLE_DEVICES=$device \
 python predict.py            \

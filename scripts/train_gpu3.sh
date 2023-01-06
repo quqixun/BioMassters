@@ -6,7 +6,7 @@ device=3
 folds=3,4
 process=plain
 config_file_list=(
-    ./configs/swin_unetr/exp19.yaml
+    ./configs/swin_unetr/exp20.yaml
 )
 
 for config_file in ${config_file_list[@]}; do
