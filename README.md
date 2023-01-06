@@ -93,11 +93,13 @@ Make predictions with almost the same arguments as training:
 - ```config_file```: file path of configurations
 - ```process_method```: processing method to calculate statistics, ```log2``` or ```plain```
 - ```folds```: list of folds, separated by ```,```
+- ```apply_tta```: if apply test-time augmentation
 
 ```bash
 device=0
 process=plain
 folds=0,1,2,3,4
+apply_tta=false
 data_root=./data/source
 config_file=./configs/swin_unetr/exp1.yaml
 
@@ -108,7 +110,8 @@ python predict.py            \
     --output_root    ./predictions/$process \
     --config_file    $config_file           \
     --process_method $process               \
-    --folds          $folds
+    --folds          $folds                 \
+    --apply_tta      $apply_tta
 ```
 
 
