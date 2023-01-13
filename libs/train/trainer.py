@@ -92,6 +92,8 @@ class BMTrainer(BMBaseTrainer):
                 self.scaler.step(self.optimizer)
                 self.scaler.update()
                 self.optimizer.zero_grad()
+                if self.apply_ema:
+                    self.model_ema.update()
 
         metrics = {key: meter.global_avg
                    for key, meter in logger.meters.items()}
@@ -99,7 +101,8 @@ class BMTrainer(BMBaseTrainer):
 
     @torch.no_grad()
     def _val_epoch(self, epoch, loader):
-        self.model.eval()
+        val_model = self.model_ema if self.apply_ema else self.model
+        val_model.eval()
 
         header = ' Val  Epoch:[{}]'.format(epoch)
         logger = MetricLogger(header, self.print_freq)
@@ -109,7 +112,7 @@ class BMTrainer(BMBaseTrainer):
             feature, label = [d.to(self.device) for d in batch_data]
             label = label.cpu().numpy()
 
-            pred = self.model(feature).cpu().numpy()
+            pred = val_model(feature).cpu().numpy()
             pred = recover_label(pred, self.norm_stats, self.process_method)
 
             rmse = np.sqrt(np.mean((pred - label) ** 2, axis=(1, 2, 3)))
