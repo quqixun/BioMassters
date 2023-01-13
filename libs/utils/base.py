@@ -2,6 +2,8 @@ import os
 import torch
 import pandas as pd
 
+from ema_pytorch import EMA
+
 from ..models import define_model
 from .losses import RecLoss, SimLoss, FFLoss
 from .scheduler import WarmupCosineAnnealingLR
@@ -28,12 +30,21 @@ class BMBaseTrainer(object):
         self.ckpt_freq   = configs.trainer.ckpt_freq
         self.accum_iter  = configs.trainer.accum_iter
         self.print_freq  = configs.trainer.print_freq
-        self.early_stop  = configs.trainer.early_stop
         self.device      = 'cuda' if torch.cuda.is_available() else 'cpu'
+        self.early_stop  = configs.trainer.get('early_stop', None)
+        self.apply_ema   = configs.trainer.get('apply_ema', False)
 
         # instantiates model
         self.model = define_model(configs.model)
         self.model = self.model.to(self.device)
+        if self.apply_ema:
+            self.model_ema = EMA(
+                self.model,
+                beta=0.99,
+                update_after_step=100,
+                update_every=1,
+                power=1.0
+            )
 
         # instantiates reconstructrion loss
         rec_kwargs = configs.loss.get('rec', None)
@@ -103,6 +114,8 @@ class BMBaseTrainer(object):
             self.start_epoch = checkpoint['epoch'] + 1
             self.model.load_state_dict(checkpoint['model'])
             self.optimizer.load_state_dict(checkpoint['optimizer'])
+            if self.apply_ema:
+                self.model_ema.load_state_dict(checkpoint['model_ema'])
         except Exception:
             print('>>> Faild to resume checkpoint')
 
@@ -114,6 +127,8 @@ class BMBaseTrainer(object):
             'model':     self.model.state_dict(),
             'optimizer': self.optimizer.state_dict(),
         }
+        if self.apply_ema:
+            ckpt['model_ema'] = self.model_ema.state_dict()
         torch.save(ckpt, ckpt_path)
 
     def _save_model(self):
