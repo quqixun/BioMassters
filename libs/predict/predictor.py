@@ -4,6 +4,7 @@ import numpy as np
 
 from PIL import Image
 from tqdm import tqdm
+from ema_pytorch import EMA
 from os.path import join as opj
 
 from ..process import *
@@ -18,6 +19,7 @@ class BMPredictor(object):
         self.norm_stats = norm_stats
         self.process_method = process_method
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
+        self.apply_ema = configs.trainer.get('apply_ema', False)
 
         # loads models
         self.models = []
@@ -27,6 +29,14 @@ class BMPredictor(object):
 
             model_dict = torch.load(model_path, map_location='cpu')
             model = define_model(configs.model)
+            if self.apply_ema:
+                model = EMA(
+                    model,
+                    beta=0.99,
+                    update_after_step=100,
+                    update_every=1,
+                    power=1.0
+                )
             model.load_state_dict(model_dict)
             model = model.to(self.device)
             model.eval()
