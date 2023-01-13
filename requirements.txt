@@ -10,3 +10,4 @@ monai                == 1.0.1
 pillow               == 9.3.0
 piqa                 == 1.2.2
 focal-frequency-loss == 0.3.0
+ema-pytorch          == 0.1.4
