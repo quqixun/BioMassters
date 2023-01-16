@@ -1,12 +1,12 @@
 #!/bin/bash
 
 
-device=3
+device=1
 folds=0
-# folds=3,4
+# folds=1,2,3,4
 process=plain
 config_file_list=(
-    ./configs/swin_unetr/exp33.yaml
+    ./configs/swin_unetr/exp30.yaml
 )
 
 for config_file in ${config_file_list[@]}; do
