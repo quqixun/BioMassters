@@ -1,6 +1,6 @@
-# BioMassters
+# The BioMassters
 
-Competition Page: https://www.drivendata.org/competitions/99/biomass-estimation/page/534/
+[Competition Page](https://www.drivendata.org/competitions/99/biomass-estimation/page/534/) and [Leaderboard](https://www.drivendata.org/competitions/99/biomass-estimation/leaderboard/)
 
 Team: **Just4Fun**
 
@@ -10,7 +10,7 @@ Source Code: https://github.com/quqixun/BioMassters
 
 ## 1. Method
 
-- S1 and S2 features and AGBM labels were carefully preprocessed according to statistics of data. See code in [process.py](./process.py) and [./libs/process](./libs/process) for details.
+- S1 and S2 features and AGBM labels were carefully preprocessed according to statistics of training data. See code in [process.py](./process.py) and [./libs/process](./libs/process) for details.
 - Training data was splited into 5 folds for cross validation in [split.py](./split.py).
 - Processed S1 and S2 features were concatenated to 3D tensor in shape [B, 15, 12, 256, 256] as input, targets were AGBM labels in shape [B, 1, 256, 256]. 
 - We applied [Swin UNETR](https://arxiv.org/abs/2201.01266) with the attention from [Swin Transformer V2](https://arxiv.org/abs/2111.09883) as the regression model. In [./libs/models](./libs/models), Swin UNETR was adapted from [the implementation by MONAI project](https://github.com/Project-MONAI/MONAI/blob/dev/monai/networks/nets/swin_unetr.py).
@@ -82,7 +82,7 @@ You don't have to run the above script again since all outputs can be found in [
 
 ## 4. Training
 
-Train model with arguments (see [./script/train.sh](./script/train.sh)):
+Train model with arguments (see [./scripts/train.sh](./scripts/train.sh)):
 
 - ```data_root```: root directory of training dataset
 - ```exp_root```: root directory to save checkpoints, logs and models
@@ -116,7 +116,7 @@ You can download the trained model from [Google Drive (tbd)]() or [Baidu Disc (c
 
 ## 5. Predicting
 
-Make predictions with almost the same arguments as training  (see [./script/predict.sh](./script/predict.sh)):
+Make predictions with almost the same arguments as training  (see [./scripts/predict.sh](./scripts/predict.sh)):
 
 - ```data_root```: root directory of training dataset
 - ```exp_root```: root directory to save checkpoints, logs and models
