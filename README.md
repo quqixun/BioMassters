@@ -1,8 +1,29 @@
 # BioMassters
 
-Competition Page: https://www.drivendata.org/competitions/99/biomass-estimation/page/536/
+Competition Page: https://www.drivendata.org/competitions/99/biomass-estimation/page/534/
 
-## 1. Environment
+Team: **Just4Fun**
+
+Contact: quqixun@gmail.com
+
+Source Code: https://github.com/quqixun/BioMassters
+
+## 1. Method
+
+- S1 and S2 features and AGBM labels were carefully preprocessed according to statistics of data. See code in [process.py](./process.py) and [./libs/process](./libs/process) for details.
+- Training data was splited into 5 folds for cross validation in [split.py](./split.py).
+- Processed S1 and S2 features were concatenated to 3D tensor in shape [B, 15, 12, 256, 256] as input, targets were AGBM labels in shape [B, 1, 256, 256]. 
+- We applied [Swin UNETR](https://arxiv.org/abs/2201.01266) with the attention from [Swin Transformer V2](https://arxiv.org/abs/2111.09883) as the regression model. In [./libs/models](./libs/models), Swin UNETR was adapted from [the implementation by MONAI project](https://github.com/Project-MONAI/MONAI/blob/dev/monai/networks/nets/swin_unetr.py).
+- In training steps, Swin UNETR was optimized by weighted MAE and [SSIM](https://github.com/francois-rozet/piqa). RMSE of validation data was used to select the best model.
+- We trained Swin UNETR using each fold, and got 5 models.
+- For each testing sample, the average of 5 predictions was the final result.
+
+## 2. Environment
+
+- Ubuntu 20.04 LTS
+- CUDA 11.3 or later
+- Any GPU with at least 40Gb VRAM for training
+- Any GPU with at least 8Gb VRAM for predicting
 
 ```bash
 conda create --name biomassters python=3.9
@@ -12,9 +33,9 @@ pip install torch==1.12.1+cu113 torchvision==0.13.1+cu113 --extra-index-url http
 pip install -r requirements.txt
 ```
 
-## 2. Dataset Preparation
+## 3. Dataset Preparation
 
-- Download Metadata from [DATA DOWNLOAD page](https://www.drivendata.org/competitions/99/biomass-estimation/data/), and put all files in [./data/information](./data/information) in following structure:
+- Download metadata from [DATA DOWNLOAD page](https://www.drivendata.org/competitions/99/biomass-estimation/data/), and put all files in [./data/information](./data/information) as following structure:
 
 ```bash
 ./data/information
@@ -23,7 +44,7 @@ pip install -r requirements.txt
 └── train_agbm_metadata.csv                # Metadata for training set AGBM tifs
 ```
 
-- Download Image data by running ```./scripts/download.sh```, data is saved in [./data/source](./data/source):
+- Download image data by running ```./scripts/download.sh```, data is saved in [./data/source](./data/source):
 
 ```bash
 ./data/source
@@ -49,7 +70,7 @@ pip install -r requirements.txt
 
 ```bash
 ./data/source
-├── plot              # data distribution
+├── plot              # plot of data distribution
 ├── splits.pkl        # 5 folds for cross validation
 ├── stats_log2.pkl    # statistics of log2 transformed dataset
 ├── stats_plain.pkl   # statistics of original dataset
@@ -57,14 +78,16 @@ pip install -r requirements.txt
 └── train
 ```
 
-## 3. Training
+You don't have to run the above script again since all outputs can be found in [./data/source](./data/source).
 
-Train model with arguments:
+## 4. Training
+
+Train model with arguments (see [./script/train.sh](./script/train.sh)):
 
 - ```data_root```: root directory of training dataset
-- ```exp_root```: root direcroty to save checkpoints, logs and models
+- ```exp_root```: root directory to save checkpoints, logs and models
 - ```config_file```: file path of configurations
-- ```process_method```: processing method to calculate statistics, ```log2``` or ```plain```
+- ```process_method```: processing method to calculate statistics, ```log2``` or ```plain```, default is ```plain```
 - ```folds```: list of folds, separated by ```,```
 
 ```bash
@@ -83,17 +106,25 @@ python train.py              \
     --folds          $folds
 ```
 
-## 4. Predicting
+Models and logs will be saved in **./experiments/plain/swin_unetr/exp1**.
 
-Make predictions with almost the same arguments as training:
+Training on 5 folds will take about 1 week if only one GPU is available.
+
+If you have 5 GPUs, you can run each fold training on each GPU, and it will take less than 2 days.
+
+You can download the trained model from [Google Drive (tbd)]() or [Baidu Disc (code:4dbj)](https://pan.baidu.com/s/1aueNuBlvWqgA_yjF2DMnbQ).
+
+## 5. Predicting
+
+Make predictions with almost the same arguments as training  (see [./script/predict.sh](./script/predict.sh)):
 
 - ```data_root```: root directory of training dataset
-- ```exp_root```: root direcroty to save checkpoints, logs and models
+- ```exp_root```: root directory to save checkpoints, logs and models
 - ```output_root```: root directory to save predictions
 - ```config_file```: file path of configurations
-- ```process_method```: processing method to calculate statistics, ```log2``` or ```plain```
+- ```process_method```: processing method to calculate statistics, ```log2``` or ```plain```, default is ```plain```
 - ```folds```: list of folds, separated by ```,```
-- ```apply_tta```: if apply test-time augmentation
+- ```apply_tta```: if apply test-time augmentation, default is ```False```
 
 ```bash
 device=0
@@ -114,5 +145,29 @@ python predict.py            \
     --apply_tta      $apply_tta
 ```
 
+Predictions will be saved in **./predictions/plain/swin_unetr/exp1/folds_0-1-2-3-4**.
 
+Predicting testing samples on 5 folds and calculating the average will take about 30 minutes.
 
+You can download the submission from [Google Drive  (tbd)]() or [Baidu Disc (code:0me5)](https://pan.baidu.com/s/1WtOP0gwXo9vlUx7I5Rw2TQ).
+
+## 6. Metrics
+
+Metrics of submitted models and predictions on validation dataset and testing dataset.
+
+|     Metrics      | Val Fold 0 | Val Fold 1 | Val Fold 2 | Val Fold 3 | Val Fold 4 | Val Average |    Test     |
+| :--------------: | :--------: | :--------: | :--------: | :--------: | :--------: | :---------: | :---------: |
+| L<sub>MAE</sub>  |  0.03562   |  0.03516   |  0.03527   |  0.03522   |  0.03626   |      -      |      -      |
+| L<sub>SSIM</sub> |  0.04758   |  0.04684   |  0.04713   |  0.04691   |  0.04834   |      -      |      -      |
+|       RMSE       |  27.9676   |  27.4368   |  27.5011   |  27.8954   |  28.0946   |   27.7781   | **27.3891** |
+
+## 7. Reference
+
+- Swin UNETR: Swin Transformers for Semantic Segmentation of Brain Tumors in MRI Images. [[Paper](https://arxiv.org/abs/2201.01266)]
+- Swin Transformer V2: Scaling Up Capacity and Resolution. [[Paper](https://arxiv.org/abs/2111.09883) , [Code](https://github.com/microsoft/Swin-Transformer)]
+- Implementation of Swin UNETR by MONAI project. [[Code]](https://github.com/Project-MONAI/MONAI/blob/dev/monai/networks/nets/swin_unetr.py)
+- Differentiable structure similarity metric. [[Code]](https://github.com/francois-rozet/piqa)
+
+## 8. License
+
+- MIT License
