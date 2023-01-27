@@ -108,9 +108,9 @@ def get_window_size(x_size, window_size, shift_size=None):
 
 class WindowAttentionV1(nn.Module):
     '''
-    Window based multi-head self attention module with relative position bias based on: 'Liu et al.,
+    Liu et al.,
     Swin Transformer: Hierarchical Vision Transformer using Shifted Windows
-    <https://arxiv.org/abs/2103.14030>'
+    <https://arxiv.org/abs/2103.14030>
     https://github.com/microsoft/Swin-Transformer
     '''
 
@@ -221,8 +221,8 @@ class WindowAttentionV1(nn.Module):
 class WindowAttentionV2(nn.Module):
     '''
     Window based multi-head self attention module with relative position bias based on: 'Liu et al.,
-    Swin Transformer: Hierarchical Vision Transformer using Shifted Windows
-    <https://arxiv.org/abs/2103.14030>'
+    Swin Transformer V2: Scaling Up Capacity and Resolution
+    <https://arxiv.org/abs/2111.09883>'
     https://github.com/microsoft/Swin-Transformer
     '''
 
@@ -388,7 +388,7 @@ class SwinTransformerBlock(nn.Module):
         qkv_bias:       bool = True,
         drop:           float = 0.0,
         attn_drop:      float = 0.0,
-        attn_version:   str = 'v1',
+        attn_version:   str = 'v2',
         drop_path:      float = 0.0,
         act_layer:      str = 'GELU',
         norm_layer:     Type[LayerNorm] = nn.LayerNorm,
@@ -692,7 +692,7 @@ class BasicLayer(nn.Module):
         qkv_bias:         bool = False,
         drop:             float = 0.0,
         attn_drop:        float = 0.0,
-        attn_version:     str = 'v1',
+        attn_version:     str = 'v2',
         norm_layer:       Type[LayerNorm] = nn.LayerNorm,
         downsample:       Optional[nn.Module] = None,
         use_checkpoint:   bool = False,
@@ -803,7 +803,7 @@ class SwinTransformer(nn.Module):
         drop_rate:      float = 0.0,
         attn_drop_rate: float = 0.0,
         drop_path_rate: float = 0.0,
-        attn_version:   str = 'v1',
+        attn_version:   str = 'v2',
         norm_layer:     Type[LayerNorm] = nn.LayerNorm,
         patch_norm:     bool = False,
         use_checkpoint: bool = False,

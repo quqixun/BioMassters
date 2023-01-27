@@ -111,22 +111,6 @@ class BMDataset(Dataset):
             if label.shape[0] > 1:
                 label = label[:1]
 
-        # import matplotlib.pyplot as plt
-        # for i, m in enumerate(self.months_list):
-        #     subject = os.path.basename(subject_path)
-        #     plt.figure(f'{subject} - {m:02d}', figsize=(15, 15))
-        #     plt.subplot(4, 4, 1)
-        #     plt.title('GT')
-        #     plt.imshow(label[0, :, :, 0], cmap='coolwarm')
-        #     plt.axis('off')
-        #     for f in range(feature.shape[-1]):
-        #         plt.subplot(4, 4, f + 2)
-        #         plt.title(f'M{m}-F{f + 1}')
-        #         plt.imshow(feature[i, :, :, f], cmap='coolwarm')
-        #         plt.axis('off')
-        #     plt.tight_layout()
-        #     plt.show()
-
         feature = feature.transpose(3, 0, 1, 2).astype(np.float32)
         # feature: (F, M, 256, 256)
         label = label[0].transpose(2, 0, 1).astype(np.float32)

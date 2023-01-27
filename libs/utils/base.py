@@ -3,7 +3,7 @@ import torch
 import pandas as pd
 
 from ..models import define_model
-from .losses import RecLoss, SimLoss, FFLoss
+from .losses import RecLoss, SimLoss
 from .scheduler import WarmupCosineAnnealingLR
 
 
@@ -47,12 +47,6 @@ class BMBaseTrainer(object):
         if sim_kwargs is not None:
             self.sim_loss_func = SimLoss(**sim_kwargs)
             self.sim_loss_func.to(self.device)
-
-        # instantiates focal frequency loss
-        ff_kwargs = configs.loss.get('ff', None)
-        self.ff_loss_func = None
-        if ff_kwargs is not None:
-            self.ff_loss_func = FFLoss(**ff_kwargs)
 
         # instantiates optimizer
         if configs.optimizer.mode == 'adamw':

@@ -49,7 +49,7 @@ class SwinUNETR(nn.Module):
         drop_rate:      float = 0.0,
         attn_drop_rate: float = 0.0,
         drop_path_rate: float = 0.0,
-        attn_version:   str = 'v1',
+        attn_version:   str = 'v2',
         normalize:      bool = True,
         use_checkpoint: bool = False,
         spatial_dims:   int = 3

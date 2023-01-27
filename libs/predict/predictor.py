@@ -71,13 +71,6 @@ class BMPredictor(object):
                 preds.append(pred)
 
             pred = np.mean(preds, axis=0)
-
-            # import matplotlib.pyplot as plt
-            # plt.figure()
-            # plt.imshow(pred)
-            # plt.tight_layout()
-            # plt.show()
-
             pred = Image.fromarray(pred)
             output_path = opj(output_dir, f'{subject}_agbm.tif')
             pred.save(output_path, format='TIFF', save_all=True)
@@ -108,16 +101,6 @@ class BMPredictor(object):
                     preds.append(pred)
 
             pred = np.mean(preds, axis=0)
-
-            # import matplotlib.pyplot as plt
-            # plt.figure(figsize=(10, 20))
-            # for i in range(len(preds)):
-            #     plt.subplot(4, 5, i + 1)
-            #     plt.imshow(preds[i])
-            #     plt.axis('off')
-            # plt.tight_layout()
-            # plt.show()
-
             pred = Image.fromarray(pred)
             output_path = opj(output_dir, f'{subject}_agbm.tif')
             pred.save(output_path, format='TIFF', save_all=True)

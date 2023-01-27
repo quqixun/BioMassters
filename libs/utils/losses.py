@@ -2,7 +2,6 @@ import torch
 import torch.nn as nn
 
 from piqa import SSIM
-from focal_frequency_loss import FocalFrequencyLoss as FFL
 
 
 class CharbonnierLoss(nn.Module):
@@ -54,14 +53,3 @@ class SimLoss(nn.Module):
         sim_loss = 1.0 - similarity
         return sim_loss * self.weight
 
-
-class FFLoss(nn.Module):
-
-    def __init__(self, weight=1.0):
-        super().__init__()
-
-        self.weight = weight
-        self.ffl_func = FFL(loss_weight=1.0, alpha=1.0)
-    
-    def forward(self, pred, label):
-        return self.ffl_func(pred, label) * self.weight
