@@ -15,7 +15,7 @@ Source Code: https://github.com/quqixun/BioMassters
 - Processed S1 and S2 features were concatenated to 3D tensor in shape [B, 15, 12, 256, 256] as input, targets were AGBM labels in shape [B, 1, 256, 256]. 
 - We applied [Swin UNETR](https://arxiv.org/abs/2201.01266) with the attention from [Swin Transformer V2](https://arxiv.org/abs/2111.09883) as the regression model. In [./libs/models](./libs/models), Swin UNETR was adapted from [the implementation by MONAI project](https://github.com/Project-MONAI/MONAI/blob/dev/monai/networks/nets/swin_unetr.py).
 - In training steps, Swin UNETR was optimized by weighted MAE and [SSIM](https://github.com/francois-rozet/piqa). RMSE of validation data was used to select the best model.
-- We trained Swin UNETR using each fold, and got 5 models.
+- We trained Swin UNETR using f folds, and got 5 models.
 - For each testing sample, the average of 5 predictions was the final result.
 
 ## 2. Environment
@@ -159,7 +159,7 @@ Metrics of submitted models and predictions on validation dataset and testing da
 | :--------------: | :--------: | :--------: | :--------: | :--------: | :--------: | :---------: | :---------: |
 | L<sub>MAE</sub>  |  0.03562   |  0.03516   |  0.03527   |  0.03522   |  0.03626   |      -      |      -      |
 | L<sub>SSIM</sub> |  0.04758   |  0.04684   |  0.04713   |  0.04691   |  0.04834   |      -      |      -      |
-|       RMSE       |  27.9676   |  27.4368   |  27.5011   |  27.8954   |  28.0946   |   27.7781   | **27.3891** |
+|       RMSE       |  27.9676   |  27.4368   |  27.5011   |  27.8954   |  28.0946   |   27.7781   | **27.6779** |
 
 ## 7. Reference
 
