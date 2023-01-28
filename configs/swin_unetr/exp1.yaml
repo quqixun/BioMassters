@@ -18,7 +18,7 @@ loader:
 trainer:
   epochs:     100
   accum_iter: 1
-  ckpt_freq:  10
+  ckpt_freq:  100
   print_freq: 200
   early_stop: 20
 

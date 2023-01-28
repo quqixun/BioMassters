@@ -45,7 +45,7 @@ class BMTrainer(BMBaseTrainer):
 
             if self.early_stop is not None:
                 if epoch - prev_best_epoch >= self.early_stop:
-                    print('- Early Stopping Since Last Best Val epoch')
+                    print('- Early Stopping Since Last Best Val Epoch')
                     break
 
         print(best_msg)
