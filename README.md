@@ -24,6 +24,7 @@ Source Code: https://github.com/quqixun/BioMassters
 - CUDA 11.3 or later
 - Any GPU with at least 40Gb VRAM for training
 - Any GPU with at least 8Gb VRAM for predicting
+- At least 16Gb RAM for training and predicting
 
 ```bash
 conda create --name biomassters python=3.9
@@ -78,7 +79,7 @@ pip install -r requirements.txt
 └── train
 ```
 
-You don't have to run the above script again since all outputs can be found in [./data/source](./data/source).
+This step takes about 80Gb RAM. You don't have to run the above script again since all outputs can be found in [./data/source](./data/source).
 
 ## 4. Training
 
@@ -112,14 +113,14 @@ Training on 5 folds will take about 1 week if only one GPU is available.
 
 If you have 5 GPUs, you can run each fold training on each GPU, and it will take less than 2 days.
 
-You can download the trained model from [Google Drive (tbd)]() or [Baidu Disc (code:4dbj)](https://pan.baidu.com/s/1aueNuBlvWqgA_yjF2DMnbQ).
+You can download the trained model from [Baidu Disc (code:jarp)](https://pan.baidu.com/s/13yRip4gSd67vNXrn-jI5CQ).
 
 ## 5. Predicting
 
 Make predictions with almost the same arguments as training  (see [./scripts/predict.sh](./scripts/predict.sh)):
 
 - ```data_root```: root directory of training dataset
-- ```exp_root```: root directory to save checkpoints, logs and models
+- ```exp_root```: root directory of checkpoints, logs and models
 - ```output_root```: root directory to save predictions
 - ```config_file```: file path of configurations
 - ```process_method```: processing method to calculate statistics, ```log2``` or ```plain```, default is ```plain```
@@ -149,7 +150,7 @@ Predictions will be saved in **./predictions/plain/swin_unetr/exp1/folds_0-1-2-3
 
 Predicting testing samples on 5 folds and calculating the average will take about 30 minutes.
 
-You can download the submission from [Google Drive  (tbd)]() or [Baidu Disc (code:0me5)](https://pan.baidu.com/s/1WtOP0gwXo9vlUx7I5Rw2TQ).
+You can download the submission from [Baidu Disc (code:w61j)](https://pan.baidu.com/s/1KpmT2WRFHeyjN_gJXPmEHQ).
 
 ## 6. Metrics
 
