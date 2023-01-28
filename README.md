@@ -25,11 +25,14 @@ Source Code: https://github.com/quqixun/BioMassters
 - Any GPU with at least 40Gb VRAM for training
 - Any GPU with at least 8Gb VRAM for predicting
 - At least 16Gb RAM for training and predicting
+- [Minconda](https://docs.conda.io/en/main/miniconda.html) or [Anaconda](https://www.anaconda.com/) for Python environment management
 
 ```bash
+# create environment
 conda create --name biomassters python=3.9
 conda activate biomassters
 
+# install packages
 pip install torch==1.12.1+cu113 torchvision==0.13.1+cu113 --extra-index-url https://download.pytorch.org/whl/cu113
 pip install -r requirements.txt
 ```
