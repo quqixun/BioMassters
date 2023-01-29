@@ -26,13 +26,14 @@ Source Code: https://github.com/quqixun/BioMassters
 - Any GPU with at least 8Gb VRAM for predicting
 - At least 16Gb RAM for training and predicting
 - [Minconda](https://docs.conda.io/en/main/miniconda.html) or [Anaconda](https://www.anaconda.com/) for Python environment management
+- [AWS CLI](https://aws.amazon.com/cli/) for downloading dataset
 
 ```bash
 # create environment
 conda create --name biomassters python=3.9
 conda activate biomassters
 
-# install packages
+# install dependencies
 pip install torch==1.12.1+cu113 torchvision==0.13.1+cu113 --extra-index-url https://download.pytorch.org/whl/cu113
 pip install -r requirements.txt
 ```
@@ -159,11 +160,11 @@ You can download the submission from [Baidu Disc (code:w61j)](https://pan.baidu.
 
 Metrics of submitted models and predictions on validation dataset and testing dataset.
 
-|     Metrics      | Val Fold 0 | Val Fold 1 | Val Fold 2 | Val Fold 3 | Val Fold 4 | Val Average |    Test     |
-| :--------------: | :--------: | :--------: | :--------: | :--------: | :--------: | :---------: | :---------: |
-| L<sub>MAE</sub>  |  0.03562   |  0.03516   |  0.03527   |  0.03522   |  0.03626   |      -      |      -      |
-| L<sub>SSIM</sub> |  0.04758   |  0.04684   |  0.04713   |  0.04691   |  0.04834   |      -      |      -      |
-|       RMSE       |  27.9676   |  27.4368   |  27.5011   |  27.8954   |  28.0946   |   27.7781   | **27.6779** |
+|     Metrics      | Val Fold 0 | Val Fold 1 | Val Fold 2 | Val Fold 3 | Val Fold 4 | Val Average | Test<br/>Public | Test<br/>Private |
+| :--------------: | :--------: | :--------: | :--------: | :--------: | :--------: | :---------: | :-------------: | :--------------: |
+| L<sub>MAE</sub>  |  0.03562   |  0.03516   |  0.03527   |  0.03522   |  0.03626   |      -      |        -        |                  |
+| L<sub>SSIM</sub> |  0.04758   |  0.04684   |  0.04713   |  0.04691   |  0.04834   |      -      |        -        |                  |
+|       RMSE       |  27.9676   |  27.4368   |  27.5011   |  27.8954   |  28.0946   |   27.7781   |   **27.3891**   |   **27.6779**    |
 
 ## 7. Reference
 
