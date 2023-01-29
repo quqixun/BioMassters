@@ -12,9 +12,10 @@ Source Code: https://github.com/quqixun/BioMassters
 
 - S1 and S2 features and AGBM labels were carefully preprocessed according to statistics of training data. See code in [process.py](./process.py) and [./libs/process](./libs/process) for details.
 - Training data was splited into 5 folds for cross validation in [split.py](./split.py).
-- Processed S1 and S2 features were concatenated to 3D tensor in shape [B, 15, 12, 256, 256] as input, targets were AGBM labels in shape [B, 1, 256, 256]. 
+- Processed S1 and S2 features were concatenated to 3D tensor in shape [B, 15, 12, 256, 256] as input, targets were AGBM labels in shape [B, 1, 256, 256].
+- Some operations, including horizontal flipping, vertical flipping and random rotation in 90 degrees, were used as data augmentation on 3D features [12, 256, 256] and 2D labels [256, 256].
 - We applied [Swin UNETR](https://arxiv.org/abs/2201.01266) with the attention from [Swin Transformer V2](https://arxiv.org/abs/2111.09883) as the regression model. In [./libs/models](./libs/models), Swin UNETR was adapted from [the implementation by MONAI project](https://github.com/Project-MONAI/MONAI/blob/dev/monai/networks/nets/swin_unetr.py).
-- In training steps, Swin UNETR was optimized by weighted MAE and [SSIM](https://github.com/francois-rozet/piqa). RMSE of validation data was used to select the best model.
+- In training steps, Swin UNETR was optimized by the sum of weighted MAE and [SSIM](https://github.com/francois-rozet/piqa). RMSE of validation data was used to select the best model.
 - We trained Swin UNETR using 5 folds, and got 5 models.
 - For each testing sample, the average of 5 predictions was the final result.
 
@@ -49,7 +50,7 @@ pip install -r requirements.txt
 └── train_agbm_metadata.csv                # Metadata for training set AGBM tifs
 ```
 
-- Download image data by running ```./scripts/download.sh```, data is saved in [./data/source](./data/source):
+- Download image data by running ```./scripts/download.sh```, data will be saved in [./data/source](./data/source) as following arrangement, or reorganize the exist dataset in the same structure.
 
 ```bash
 ./data/source
@@ -117,7 +118,26 @@ Training on 5 folds will take about 1 week if only one GPU is available.
 
 If you have 5 GPUs, you can run each fold training on each GPU, and it will take less than 2 days.
 
-You can download the trained model from [Baidu Disc (code:jarp)](https://pan.baidu.com/s/13yRip4gSd67vNXrn-jI5CQ).
+You can download the trained models from [Baidu Disc (code:jarp)](https://pan.baidu.com/s/13yRip4gSd67vNXrn-jI5CQ), and then unzip models as following arrangement:
+
+```bash
+./experiments/plain/swin_unetr/exp1
+├── fold0
+│   ├── logs.csv
+│   └── model.pth
+├── fold1
+│   ├── logs.csv
+│   └── model.pth
+├── fold2
+│   ├── logs.csv
+│   └── model.pth
+├── fold3
+│   ├── logs.csv
+│   └── model.pth
+└── fold4
+    ├── logs.csv
+    └── model.pth
+```
 
 ## 5. Predicting
 
@@ -154,7 +174,7 @@ Predictions will be saved in **./predictions/plain/swin_unetr/exp1/folds_0-1-2-3
 
 Predicting testing samples on 5 folds and calculating the average will take about 30 minutes.
 
-You can download the submission from [Baidu Disc (code:w61j)](https://pan.baidu.com/s/1KpmT2WRFHeyjN_gJXPmEHQ).
+You can download the submission for public testing from [Baidu Disc (code:w61j)](https://pan.baidu.com/s/1KpmT2WRFHeyjN_gJXPmEHQ).
 
 ## 6. Metrics
 
