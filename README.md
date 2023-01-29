@@ -112,7 +112,7 @@ python train.py              \
     --folds          $folds
 ```
 
-Models and logs will be saved in **./experiments/plain/swin_unetr/exp1**.
+Run ```./scripts/tran.sh``` for training, then models and logs will be saved in **./experiments/plain/swin_unetr/exp1**.
 
 Training on 5 folds will take about 1 week if only one GPU is available.
 
@@ -170,7 +170,7 @@ python predict.py            \
     --apply_tta      $apply_tta
 ```
 
-Predictions will be saved in **./predictions/plain/swin_unetr/exp1/folds_0-1-2-3-4**.
+Run ```./scripts/predict.sh``` for predicting, then predictions will be saved in **./predictions/plain/swin_unetr/exp1/folds_0-1-2-3-4**.
 
 Predicting testing samples on 5 folds and calculating the average will take about 30 minutes.
 
