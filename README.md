@@ -180,11 +180,11 @@ You can download the submission for public testing from [Baidu Disc (code:w61j)]
 
 Metrics of submitted models and predictions on validation dataset and testing dataset.
 
-|     Metrics      | Val Fold 0 | Val Fold 1 | Val Fold 2 | Val Fold 3 | Val Fold 4 | Val Average | Test<br/>Public | Test<br/>Private |
-| :--------------: | :--------: | :--------: | :--------: | :--------: | :--------: | :---------: | :-------------: | :--------------: |
-| L<sub>MAE</sub>  |  0.03562   |  0.03516   |  0.03527   |  0.03522   |  0.03626   |      -      |        -        |                  |
-| L<sub>SSIM</sub> |  0.04758   |  0.04684   |  0.04713   |  0.04691   |  0.04834   |      -      |        -        |                  |
-|       RMSE       |  27.9676   |  27.4368   |  27.5011   |  27.8954   |  28.0946   |   27.7781   |   **27.3891**   |   **27.6779**    |
+|     Metrics      | Val<br/>Fold 0 | Val<br/>Fold 1 | Val<br/>Fold 2 | Val<br/>Fold 3 | Val<br/>Fold 4 | Val<br/>Average | Test<br/>Public | Test<br/>Private |
+| :--------------: | :------------: | :------------: | :------------: | :------------: | :------------: | :-------------: | :-------------: | :--------------: |
+| L<sub>MAE</sub>  |    0.03562     |    0.03516     |    0.03527     |    0.03522     |    0.03626     |        -        |        -        |                  |
+| L<sub>SSIM</sub> |    0.04758     |    0.04684     |    0.04713     |    0.04691     |    0.04834     |        -        |        -        |                  |
+|       RMSE       |    27.9676     |    27.4368     |    27.5011     |    27.8954     |    28.0946     |     27.7781     |   **27.3891**   |   **27.6779**    |
 
 ## 7. Reference
 
