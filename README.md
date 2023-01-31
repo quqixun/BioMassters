@@ -172,9 +172,9 @@ python predict.py            \
 
 Run ```./scripts/predict.sh``` for predicting, then predictions will be saved in **./predictions/plain/swin_unetr/exp1/folds_0-1-2-3-4**.
 
-Predicting testing samples on 5 folds and calculating the average will take about 30 minutes.
+Predicting public testing samples on 5 folds and calculating the average will take about 30 minutes.
 
-You can download the submission for public testing from [Baidu Disc (code:w61j)](https://pan.baidu.com/s/1KpmT2WRFHeyjN_gJXPmEHQ).
+You can download the submission for public testing dataset from [Baidu Disc (code:w61j)](https://pan.baidu.com/s/1KpmT2WRFHeyjN_gJXPmEHQ).
 
 ## 6. Metrics
 
