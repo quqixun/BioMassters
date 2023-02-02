@@ -36,8 +36,8 @@ def check_file_exist(filepath, filesize):
     return False
 
 
-def download_features(download_root=None, features_metadata_path=None, node='as'):
-    print('Downloading features ...')
+def download_features(download_root=None, features_metadata_path=None, node='as', target_split='all'):
+    print(f'Downloading {target_split} features ...')
 
     if download_root is None:
         download_root = DOWNLOAD_ROOT_DIR
@@ -45,6 +45,8 @@ def download_features(download_root=None, features_metadata_path=None, node='as'
         features_metadata_path = FEATURES_METADATA_PATH
 
     features_metadata = pd.read_csv(features_metadata_path)
+    if target_split != 'all':
+        features_metadata = features_metadata.loc[features_metadata['split'] == target_split]
     num_files = len(features_metadata)
 
     s3_node = get_s3_node(node)
@@ -95,16 +97,19 @@ if __name__ == '__main__':
     parser.add_argument('--features_metadata',        type=str, help='file path of metadata of features')
     parser.add_argument('--training_labels_metadata', type=str, help='file path of metadata of training labels')
     parser.add_argument('--s3_node',                  type=str, help='s3 node, us, eu or as')
+    parser.add_argument('--split',                    type=str, choices=['train', 'test', 'all'], help='dataset split, train, test or all')
     args = parser.parse_args()
 
     download_features(
         download_root=args.download_root,
         features_metadata_path=args.features_metadata,
-        node=args.s3_node
+        node=args.s3_node,
+        target_split=args.split
     )
 
-    download_training_labels(
-        download_root=args.download_root,
-        training_labels_metadata_path=args.training_labels_metadata,
-        node=args.s3_node
-    )
+    if args.split != 'test':
+        download_training_labels(
+            download_root=args.download_root,
+            training_labels_metadata_path=args.training_labels_metadata,
+            node=args.s3_node
+        )
