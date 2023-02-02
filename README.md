@@ -62,7 +62,10 @@ cd BioMassters
 
 ```bash
 s3_node=as  # options: as, us, eu
-split=test  # options: train, test, all
+split=all   # download specific dataset, options: train, test, all
+            # set split to test for predicting only
+            # set split to train for training only
+            # set split to all otherwise
 download_root=./data/source
 features_metadata=./data/information/features_metadata_FzP19JI.csv
 training_labels_metadata=./data/information/train_agbm_metadata.csv

@@ -2,7 +2,7 @@
 
 
 s3_node=as
-split=test
+split=all
 download_root=./data/source
 features_metadata=./data/information/features_metadata_FzP19JI.csv
 training_labels_metadata=./data/information/train_agbm_metadata.csv
