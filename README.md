@@ -39,6 +39,14 @@ pip install torch==1.12.1+cu113 torchvision==0.13.1+cu113 --extra-index-url http
 pip install -r requirements.txt
 ```
 
+Clone code:
+
+```bash
+git clone git@github.com:quqixun/BioMassters.git
+# working dir
+cd BioMassters
+```
+
 ## 3. Dataset Preparation
 
 - Download metadata from [DATA DOWNLOAD page](https://www.drivendata.org/competitions/99/biomass-estimation/data/), and put all files in [./data/information](./data/information) as following structure:
@@ -46,11 +54,29 @@ pip install -r requirements.txt
 ```bash
 ./data/information
 ├── biomassters-download-instructions.txt  # Instructions to download satellite images and AGBM data
-├── features_metadata.csv                  # Metadata for satellite images
+├── features_metadata_FzP19JI.csv          # Metadata for satellite images
 └── train_agbm_metadata.csv                # Metadata for training set AGBM tifs
 ```
 
-- Download image data by running ```./scripts/download.sh```, data will be saved in [./data/source](./data/source) as following arrangement, or reorganize the exist dataset in the same structure.
+- Download image data by running ```./scripts/download.sh```:
+
+```bash
+s3_node=as  # options: as, us, eu
+split=test  # options: train, test, all
+download_root=./data/source
+features_metadata=./data/information/features_metadata_FzP19JI.csv
+training_labels_metadata=./data/information/train_agbm_metadata.csv
+
+python download.py \
+    --download_root            $download_root            \
+    --features_metadata        $features_metadata        \
+    --training_labels_metadata $training_labels_metadata \
+    --s3_node                  $s3_node                  \
+    --split                    $split
+```
+
+Data will be saved in [./data/source](./data/source) as following arrangement.
+Or you can reorganize the exist dataset in the same structure.
 
 ```bash
 ./data/source
@@ -73,6 +99,23 @@ pip install -r requirements.txt
 ```
 
 - Calculate statistics for normalization and split dataset into 5 folds by running ```./scripts/process.sh```:
+
+```bash
+source_root=./data/source
+split_seed=42
+split_folds=5
+
+python process.py \
+    --source_root    $source_root \
+    --process_method plain
+
+python split.py \
+    --data_root   $source_root \
+    --split_seed  $split_seed  \
+    --split_folds $split_folds
+```
+
+Outputs in [./data/source](./data/source) should be same as the following structure:
 
 ```bash
 ./data/source
@@ -115,9 +158,7 @@ python train.py              \
 Run ```./scripts/tran.sh``` for training, then models and logs will be saved in **./experiments/plain/swin_unetr/exp1**.
 
 Training on 5 folds will take about 1 week if only one GPU is available.
-
 If you have 5 GPUs, you can run each fold training on each GPU, and it will take less than 2 days.
-
 You can download the trained models from [Baidu Disc (code:jarp)](https://pan.baidu.com/s/13yRip4gSd67vNXrn-jI5CQ), and then unzip models as following arrangement:
 
 ```bash
@@ -173,7 +214,6 @@ python predict.py            \
 Run ```./scripts/predict.sh``` for predicting, then predictions will be saved in **./predictions/plain/swin_unetr/exp1/folds_0-1-2-3-4**.
 
 Predicting public testing samples on 5 folds and calculating the average will take about 30 minutes.
-
 You can download the submission for public testing dataset from [Baidu Disc (code:w61j)](https://pan.baidu.com/s/1KpmT2WRFHeyjN_gJXPmEHQ).
 
 ## 6. Metrics
