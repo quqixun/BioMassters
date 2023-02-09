@@ -162,7 +162,7 @@ Run ```./scripts/tran.sh``` for training, then models and logs will be saved in 
 
 Training on 5 folds will take about 1 week if only one GPU is available.
 If you have 5 GPUs, you can run each fold training on each GPU, and it will take less than 2 days.
-You can download the trained models from [Baidu Disc (code:jarp)](https://pan.baidu.com/s/13yRip4gSd67vNXrn-jI5CQ), and then unzip models as following arrangement:
+You can download the trained models from [BaiduDisc (code:jarp)](https://pan.baidu.com/s/13yRip4gSd67vNXrn-jI5CQ) or [MEGA](https://mega.nz/file/XNpWBZSY#rkA2O5JsR6TZ_xfqS3TV4I0V_xs76ni9_2PlFmfhUh8), and then unzip models as following arrangement:
 
 ```bash
 ./experiments/plain/swin_unetr/exp1
@@ -217,7 +217,7 @@ python predict.py            \
 Run ```./scripts/predict.sh``` for predicting, then predictions will be saved in **./predictions/plain/swin_unetr/exp1/folds_0-1-2-3-4**.
 
 Predicting public testing samples on 5 folds and calculating the average will take about 30 minutes.
-You can download the submission for public testing dataset from [Baidu Disc (code:w61j)](https://pan.baidu.com/s/1KpmT2WRFHeyjN_gJXPmEHQ).
+You can download the submission for public testing dataset from [BaiduDisc (code:w61j)](https://pan.baidu.com/s/1KpmT2WRFHeyjN_gJXPmEHQ) or [MEGA](https://mega.nz/file/6M410TRY#ozfptCWDvYatZHMAm18uOayYDwAZSAw3U-ZfxAONLN8).
 
 ## 6. Metrics
 
