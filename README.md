@@ -97,6 +97,11 @@ Or you can reorganize the exist dataset in the same structure.
 │   └── fff812c0
 └── train
     ├── aa018d7b
+    |   ├── S1
+    |   |   └── ...
+    |   ├── S2
+    |   |   └── ...
+    |   └── aa018d7b_agbm.tif
     ├── ...
     └── fff05995
 ```
