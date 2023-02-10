@@ -81,7 +81,7 @@ python download.py \
 Data will be saved in [./data/source](./data/source) as following arrangement.
 Or you can reorganize the exist dataset in the same structure.
 
-```bash
+```
 ./data/source
 ├── test
 │   ├── aa5e092e
