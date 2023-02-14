@@ -167,7 +167,7 @@ Run ```./scripts/tran.sh``` for training, then models and logs will be saved in 
 
 Training on 5 folds will take about 1 week if only one GPU is available.
 If you have 5 GPUs, you can run each fold training on each GPU, and it will take less than 2 days.
-You can download the trained models from [BaiduDisc (code:jarp)](https://pan.baidu.com/s/13yRip4gSd67vNXrn-jI5CQ) or [MEGA](https://mega.nz/file/XNpWBZSY#rkA2O5JsR6TZ_xfqS3TV4I0V_xs76ni9_2PlFmfhUh8), and then unzip models as following arrangement:
+You can download the trained models from [BaiduDisc (code:jarp)](https://pan.baidu.com/s/13yRip4gSd67vNXrn-jI5CQ), [MEGA](https://mega.nz/file/XNpWBZSY#rkA2O5JsR6TZ_xfqS3TV4I0V_xs76ni9_2PlFmfhUh8) or [Google Drive](https://drive.google.com/file/d/1R-nonruzxUU6uJYraJ6cA8Z-nUVVAJa7/view?usp=share_link), and then unzip models as following arrangement:
 
 ```bash
 ./experiments/plain/swin_unetr/exp1
