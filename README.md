@@ -230,8 +230,8 @@ Metrics of submitted models and predictions on validation dataset and testing da
 
 |     Metrics      | Val<br/>Fold 0 | Val<br/>Fold 1 | Val<br/>Fold 2 | Val<br/>Fold 3 | Val<br/>Fold 4 | Val<br/>Average | Test<br/>Public | Test<br/>Private |
 | :--------------: | :------------: | :------------: | :------------: | :------------: | :------------: | :-------------: | :-------------: | :--------------: |
-| L<sub>MAE</sub>  |    0.03562     |    0.03516     |    0.03527     |    0.03522     |    0.03626     |        -        |        -        |                  |
-| L<sub>SSIM</sub> |    0.04758     |    0.04684     |    0.04713     |    0.04691     |    0.04834     |        -        |        -        |                  |
+| L<sub>rec</sub>  |    0.03562     |    0.03516     |    0.03527     |    0.03522     |    0.03626     |        -        |        -        |                  |
+| L<sub>ssim</sub> |    0.04758     |    0.04684     |    0.04713     |    0.04691     |    0.04834     |        -        |        -        |                  |
 |       RMSE       |    27.9676     |    27.4368     |    27.5011     |    27.8954     |    28.0946     |     27.7781     |   **27.3891**   |   **27.6779**    |
 
 ## 7. Reference
@@ -240,6 +240,7 @@ Metrics of submitted models and predictions on validation dataset and testing da
 - Swin Transformer V2: Scaling Up Capacity and Resolution. [[Paper](https://arxiv.org/abs/2111.09883) , [Code](https://github.com/microsoft/Swin-Transformer)]
 - Implementation of Swin UNETR by MONAI project. [[Code]](https://github.com/Project-MONAI/MONAI/blob/dev/monai/networks/nets/swin_unetr.py)
 - Differentiable structure similarity metric. [[Code]](https://github.com/francois-rozet/piqa)
+- Library for 3D augmentations. [[Paper](https://arxiv.org/abs/2104.01687), [Code](https://github.com/ZFTurbo/volumentations)]
 
 ## 8. License
 
