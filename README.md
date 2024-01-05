@@ -1,6 +1,8 @@
 # The BioMassters
 
-[Competition Page](https://www.drivendata.org/competitions/99/biomass-estimation/page/534/) and [Leaderboard](https://www.drivendata.org/competitions/99/biomass-estimation/leaderboard/)
+This code is one of three benchmarks for dataset [BioMassters](https://nascetti-a.github.io/BioMasster/).
+
+[Competition Page](https://www.drivendata.org/competitions/99/biomass-estimation/page/534/) and [Leaderboard](https://www.drivendata.org/competitions/99/biomass-estimation/leaderboard/) and [Paper](https://openreview.net/forum?id=hrWsIC4Cmz)
 
 Team: **Just4Fun**
 
@@ -245,3 +247,4 @@ Metrics of submitted models and predictions on validation dataset and testing da
 ## 8. License
 
 - MIT License
+
